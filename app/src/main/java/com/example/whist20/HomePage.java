@@ -29,7 +29,7 @@ import java.util.Vector;
 public class HomePage extends AppCompatActivity implements View.OnClickListener {
     public static User user = null;
 
-    private Button log_out, create_game;
+    private Button log_out, create_game, refresh;
     private DatabaseReference reference;
     private String id;
     private ProgressBar progress_bar;
@@ -43,6 +43,9 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
         progress_bar.setVisibility(View.VISIBLE);
 
         layout = (LinearLayout) findViewById(R.id.homePageLinearLayout);
+
+        refresh = (Button) findViewById(R.id.homePageRefreshButton);
+        refresh.setOnClickListener(this);
 
         log_out = (Button) findViewById(R.id.logOutButton);
         log_out.setOnClickListener(this);
@@ -62,20 +65,19 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
             case R.id.createGameButton:
                 startActivity(new Intent(HomePage.this, CreateGame.class));
                 break;
+            case R.id.homePageRefreshButton:
+                refreshPage();
+                break;
             default:
                 throw new IllegalStateException("Unexpected value: " + view.getId());
         }
     }
 
-    private void viewProfile() {
-        FirebaseUser firebase_user = FirebaseAuth.getInstance().getCurrentUser();
-        reference = FirebaseDatabase.getInstance().getReference("Users");
-        id = firebase_user.getUid();
-
+    private void refreshPage() {
         FirebaseDatabase.getInstance().getReference("WaitingSessions").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-
+                layout.removeAllViews();
                 for (DataSnapshot child : snapshot.getChildren()) {
                     GameState game = child.getValue(GameState.class);
                     TextView text = new TextView(HomePage.this);
@@ -121,6 +123,13 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
 
             }
         });
+    }
+
+    private void viewProfile() {
+        FirebaseUser firebase_user = FirebaseAuth.getInstance().getCurrentUser();
+        reference = FirebaseDatabase.getInstance().getReference("Users");
+        id = firebase_user.getUid();
+        refreshPage();
 
         reference.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
