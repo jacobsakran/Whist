@@ -24,6 +24,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Text;
 
+import java.util.HashMap;
 import java.util.Vector;
 
 public class HomePage extends AppCompatActivity implements View.OnClickListener {
@@ -46,12 +47,15 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
 
         refresh = (Button) findViewById(R.id.homePageRefreshButton);
         refresh.setOnClickListener(this);
+        refresh.setVisibility(View.INVISIBLE);
 
         log_out = (Button) findViewById(R.id.logOutButton);
         log_out.setOnClickListener(this);
+        log_out.setVisibility(View.INVISIBLE);
 
         create_game = (Button) findViewById(R.id.createGameButton);
         create_game.setOnClickListener(this);
+        create_game.setVisibility(View.INVISIBLE);
 
         viewProfile();
     }
@@ -82,13 +86,14 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                     GameState game = child.getValue(GameState.class);
                     TextView text = new TextView(HomePage.this);
                     text.setTextSize(20);
-
-                    text.setText((String) game.players_id.obj);
+                    text.setHint((String) game.players_id.obj);
+                    String text_to_show = "Click to join " + (String) game.players_usernames.obj + "'s game";
+                    text.setText(text_to_show);
                     layout.addView(text);
                     text.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            String host_id = ((TextView) view).getText().toString().trim();
+                            String host_id = ((TextView) view).getHint().toString().trim();
                             user.current_game_id = host_id;
                             FirebaseDatabase.getInstance().getReference("WaitingSessions").child(host_id)
                                     .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -101,8 +106,11 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                                                     .setValue(game).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                 @Override
                                                 public void onComplete(@NonNull Task<Void> task) {
-                                                    if (task.isSuccessful())
+                                                    if (task.isSuccessful()) {
+                                                        FirebaseDatabase.getInstance().getReference("Users")
+                                                                .child(user.uid).child("current_game_id").setValue(user.current_game_id);
                                                         startActivity(new Intent(HomePage.this, WaitingSession.class));
+                                                    }
                                                 }
                                             });
                                         }
@@ -137,6 +145,11 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                 user = snapshot.getValue(User.class);
                 if (user != null) {
                     progress_bar.setVisibility(View.INVISIBLE);
+                    create_game.setVisibility(View.VISIBLE);
+                    log_out.setVisibility(View.VISIBLE);
+                    refresh.setVisibility(View.VISIBLE);
+
+                    if (!user.current_game_id.equals("")) startActivity(new Intent(HomePage.this, WaitingSession.class));
                     // the logged in user is loaded into the "user" parameter.
                 }
             }
