@@ -6,6 +6,7 @@ enum Suit {
     Spade,
     Clubs
 }
+
 public class Card {
     public Suit suit;
     public int value;
