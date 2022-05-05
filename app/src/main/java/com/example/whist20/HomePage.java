@@ -103,7 +103,6 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                                                         startActivity(new Intent(HomePage.this, WaitingSession.class));
                                                 }
                                             });
-
                                         }
 
                                         @Override
@@ -116,13 +115,12 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                 }
 
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
         });
-
-
 
         reference.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
