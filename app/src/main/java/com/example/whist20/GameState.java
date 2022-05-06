@@ -13,7 +13,8 @@ public class GameState {
     public Suit trump;
     public int current_index;
     public int num_of_players;
-    boolean is_active;
+    public String game_name; // this is name unique i.e., is used as a an ID for each game.
+    public boolean is_active;
 
     public GameState() {
         this.players_id = new Node();
@@ -26,7 +27,7 @@ public class GameState {
         this.current_index = 0;
         this.trump = Suit.Hearts;
         this.is_active = false;
-
+        this.game_name = "";
     }
 
     public String getGameId() {

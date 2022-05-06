@@ -41,23 +41,18 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
         progress_bar = (ProgressBar) findViewById(R.id.homePageProgressBar);
-        progress_bar.setVisibility(View.VISIBLE);
-
         layout = (LinearLayout) findViewById(R.id.homePageLinearLayout);
 
         refresh = (Button) findViewById(R.id.homePageRefreshButton);
         refresh.setOnClickListener(this);
-        refresh.setVisibility(View.INVISIBLE);
 
         log_out = (Button) findViewById(R.id.logOutButton);
         log_out.setOnClickListener(this);
-        log_out.setVisibility(View.INVISIBLE);
 
         create_game = (Button) findViewById(R.id.createGameButton);
         create_game.setOnClickListener(this);
-        create_game.setVisibility(View.INVISIBLE);
 
-        viewProfile();
+        viewHomePage();
     }
 
     @Override
@@ -70,14 +65,14 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                 startActivity(new Intent(HomePage.this, CreateGame.class));
                 break;
             case R.id.homePageRefreshButton:
-                refreshPage();
+                viewHomePage();
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + view.getId());
         }
     }
 
-    private void refreshPage() {
+    private void viewGameServers() {
         FirebaseDatabase.getInstance().getReference("WaitingSessions").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -86,16 +81,23 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                     GameState game = child.getValue(GameState.class);
                     TextView text = new TextView(HomePage.this);
                     text.setTextSize(20);
-                    text.setHint((String) game.players_id.obj);
-                    String text_to_show = "Click to join " + (String) game.players_usernames.obj + "'s game";
+                    text.setHint((String) game.game_name);
+                    String text_to_show = "Click to join " + (String) game.game_name + " game";
                     text.setText(text_to_show);
                     layout.addView(text);
                     text.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            String host_id = ((TextView) view).getHint().toString().trim();
-                            user.current_game_id = host_id;
-                            FirebaseDatabase.getInstance().getReference("WaitingSessions").child(host_id)
+                            if (!user.current_game_id.equals("")) {
+                                String msg = "You are already in this game, exit to join a new one";
+                                startActivity(new Intent(HomePage.this, WaitingSession.class));
+                                Toast.makeText(HomePage.this, msg, Toast.LENGTH_LONG).show();
+                                return;
+                            }
+
+                            String game_name = ((TextView) view).getHint().toString().trim();
+                            user.current_game_id = game_name;
+                            FirebaseDatabase.getInstance().getReference("WaitingSessions").child(game_name)
                                     .addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -133,11 +135,16 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
         });
     }
 
-    private void viewProfile() {
+    private void viewHomePage() {
+        progress_bar.setVisibility(View.VISIBLE);
+        refresh.setVisibility(View.INVISIBLE);
+        log_out.setVisibility(View.INVISIBLE);
+        create_game.setVisibility(View.INVISIBLE);
+
         FirebaseUser firebase_user = FirebaseAuth.getInstance().getCurrentUser();
         reference = FirebaseDatabase.getInstance().getReference("Users");
         id = firebase_user.getUid();
-        refreshPage();
+        viewGameServers();
 
         reference.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

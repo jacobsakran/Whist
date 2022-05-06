@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -19,6 +20,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class WaitingSession extends AppCompatActivity {
     private GameState game;
     private TextView player1, player2, player3, player4;
@@ -28,13 +32,15 @@ public class WaitingSession extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_waiting_session);
+        game = null;
 
         exit = (Button) findViewById(R.id.exitWaitingSession);
         exit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 game.removeUserByUid(HomePage.user.uid);
-                FirebaseDatabase.getInstance().getReference("WaitingSessions").child(game.getGameId()).setValue(game)
+                if (game.players_id.obj == null) game = null;
+                FirebaseDatabase.getInstance().getReference("WaitingSessions").child(HomePage.user.current_game_id).setValue(game)
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
@@ -55,14 +61,15 @@ public class WaitingSession extends AppCompatActivity {
 
         String game_id = HomePage.user.current_game_id;
         FirebaseDatabase.getInstance().getReference("WaitingSessions").child(game_id).addValueEventListener(new ValueEventListener() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                game = snapshot.getValue(GameState.class);
-                if (game == null) {
-                    Toast.makeText(WaitingSession.this, "Something went wrong!", Toast.LENGTH_LONG).show();
+                if (snapshot.getValue(GameState.class) == null) {
+                    snapshot.getRef().removeEventListener(this);
                     return;
                 }
 
+                game = snapshot.getValue(GameState.class);
                 Node players = game.players_usernames;
                 if (players != null) {
                     player1.setText((String) players.obj);
