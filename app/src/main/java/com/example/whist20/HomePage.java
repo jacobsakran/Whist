@@ -24,14 +24,14 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Text;
 
+import java.util.HashMap;
 import java.util.Vector;
 
 public class HomePage extends AppCompatActivity implements View.OnClickListener {
     public static User user = null;
 
-    private Button log_out, create_game;
+    private Button log_out, create_game, refresh;
     private DatabaseReference reference;
-    private String id;
     private ProgressBar progress_bar;
     private LinearLayout layout;
 
@@ -40,9 +40,10 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
         progress_bar = (ProgressBar) findViewById(R.id.homePageProgressBar);
-        progress_bar.setVisibility(View.VISIBLE);
-
         layout = (LinearLayout) findViewById(R.id.homePageLinearLayout);
+
+        refresh = (Button) findViewById(R.id.homePageRefreshButton);
+        refresh.setOnClickListener(this);
 
         log_out = (Button) findViewById(R.id.logOutButton);
         log_out.setOnClickListener(this);
@@ -50,7 +51,7 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
         create_game = (Button) findViewById(R.id.createGameButton);
         create_game.setOnClickListener(this);
 
-        viewProfile();
+        viewHomePage();
     }
 
     @Override
@@ -62,45 +63,58 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
             case R.id.createGameButton:
                 startActivity(new Intent(HomePage.this, CreateGame.class));
                 break;
+            case R.id.homePageRefreshButton:
+                viewHomePage();
+                break;
             default:
                 throw new IllegalStateException("Unexpected value: " + view.getId());
         }
     }
 
-    private void viewProfile() {
-        FirebaseUser firebase_user = FirebaseAuth.getInstance().getCurrentUser();
-        reference = FirebaseDatabase.getInstance().getReference("Users");
-        id = firebase_user.getUid();
-
+    private void viewGameServers() {
         FirebaseDatabase.getInstance().getReference("WaitingSessions").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-
+                layout.removeAllViews();
                 for (DataSnapshot child : snapshot.getChildren()) {
                     GameState game = child.getValue(GameState.class);
+                    assert game != null;
+
                     TextView text = new TextView(HomePage.this);
                     text.setTextSize(20);
-
-                    text.setText((String) game.players_id.obj);
+                    text.setHint((String) game.game_name);
+                    String text_to_show = "Click to join " + (String) game.game_name + " game";
+                    text.setText(text_to_show);
                     layout.addView(text);
+
                     text.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            String host_id = ((TextView) view).getText().toString().trim();
-                            user.current_game_id = host_id;
-                            FirebaseDatabase.getInstance().getReference("WaitingSessions").child(host_id)
+                            if (!user.current_game_id.equals("")) {
+                                String msg = "You are already in this game, exit to join a new one";
+                                Toast.makeText(HomePage.this, msg, Toast.LENGTH_LONG).show();
+                                startActivity(new Intent(HomePage.this, WaitingSession.class));
+                                return;
+                            }
+
+                            String game_name = ((TextView) view).getHint().toString().trim();
+                            user.current_game_id = game_name;
+                            FirebaseDatabase.getInstance().getReference("WaitingSessions").child(game_name)
                                     .addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                                             GameState game = snapshot.getValue(GameState.class);
-                                            game.players_usernames.addValue(user.username);
-                                            game.players_id.addValue(user.uid);
+                                            assert game != null;
+                                            game.addPlayer(user.uid, user.username);
                                             FirebaseDatabase.getInstance().getReference("WaitingSessions").child(user.current_game_id)
                                                     .setValue(game).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                 @Override
                                                 public void onComplete(@NonNull Task<Void> task) {
-                                                    if (task.isSuccessful())
+                                                    if (task.isSuccessful()) {
+                                                        FirebaseDatabase.getInstance().getReference("Users")
+                                                                .child(user.uid).child("current_game_id").setValue(user.current_game_id);
                                                         startActivity(new Intent(HomePage.this, WaitingSession.class));
+                                                    }
                                                 }
                                             });
                                         }
@@ -121,6 +135,19 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
 
             }
         });
+    }
+
+    private void viewHomePage() {
+        progress_bar.setVisibility(View.VISIBLE);
+        refresh.setVisibility(View.INVISIBLE);
+        log_out.setVisibility(View.INVISIBLE);
+        create_game.setVisibility(View.INVISIBLE);
+
+        FirebaseUser firebase_user = FirebaseAuth.getInstance().getCurrentUser();
+        reference = FirebaseDatabase.getInstance().getReference("Users");
+        assert firebase_user != null;
+        String id = firebase_user.getUid();
+        viewGameServers();
 
         reference.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -128,6 +155,11 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                 user = snapshot.getValue(User.class);
                 if (user != null) {
                     progress_bar.setVisibility(View.INVISIBLE);
+                    create_game.setVisibility(View.VISIBLE);
+                    log_out.setVisibility(View.VISIBLE);
+                    refresh.setVisibility(View.VISIBLE);
+
+                    if (!user.current_game_id.equals("")) startActivity(new Intent(HomePage.this, WaitingSession.class));
                     // the logged in user is loaded into the "user" parameter.
                 }
             }

@@ -25,6 +25,7 @@ public class User {
         this.username = username;
         this.friends = new Node();
         this.uid = uid;
+        this.current_game_id = "";
     }
 
 };

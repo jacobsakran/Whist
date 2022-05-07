@@ -14,6 +14,7 @@ public class Node {
         this.next = null;
     }
 
+
     public void addValue(Object obj) {
         if (this.obj == null) {
             this.obj = obj;
