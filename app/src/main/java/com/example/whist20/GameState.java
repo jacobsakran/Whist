@@ -13,26 +13,35 @@ public class GameState {
     public Suit trump;
     public int current_index;
     public int num_of_players;
+
     public String game_name; // this is name unique i.e., is used as a an ID for each game.
     public boolean is_active;
 
     public GameState() {
+
+    }
+
+    public GameState(String game_name) {
         this.players_id = new Node();
         this.players_cards = new Node();
         this.players_usernames = new Node();
-        this.num_of_players = 0;
+        this.last_round = new Round();
+
         this.team1 = null;
         this.team2 = null;
-        this.last_round = new Round();
+
+        this.num_of_players = 0;
         this.current_index = 0;
+
         this.trump = Suit.Hearts;
         this.is_active = false;
-        this.game_name = "";
+        this.game_name = game_name;
     }
 
-    public String getGameId() {
-        if (players_id.obj == null) return "";
-        return (String) players_id.obj;
+    public void addPlayer(String uid, String username) {
+        this.players_id.addValue(uid);
+        this.players_usernames.addValue(username);
+        this.num_of_players = this.num_of_players + 1;
     }
 
     public void removeUserByUid(String uid) {
@@ -44,6 +53,7 @@ public class GameState {
             this.players_usernames = this.players_usernames.next;
             if (this.players_id == null) this.players_id = new Node();
             if (this.players_usernames == null) this.players_usernames = new Node();
+            this.num_of_players = this.num_of_players - 1;
             return;
         }
 
@@ -56,6 +66,7 @@ public class GameState {
         assert iterator1.next != null;
         iterator1.next = iterator1.next.next;
         iterator2.next = iterator2.next.next;
+        this.num_of_players = this.num_of_players - 1;
     }
 
     public String currentPlayerTurn() {
@@ -66,7 +77,8 @@ public class GameState {
             iterator = iterator.next;
             counter = counter + 1;
         }
-        if (iterator == null) return "";
+
+        assert iterator != null;
         return (String) iterator.obj;
     }
 

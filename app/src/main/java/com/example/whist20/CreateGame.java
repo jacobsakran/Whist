@@ -3,6 +3,7 @@ package com.example.whist20;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -47,7 +48,6 @@ public class CreateGame extends AppCompatActivity implements View.OnClickListene
     }
 
     public void createGame() {
-        GameState game = new GameState();
         String game_name = game_name_edit_text.getText().toString().trim();
         FirebaseDatabase.getInstance().getReference("WaitingSessions")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -58,16 +58,14 @@ public class CreateGame extends AppCompatActivity implements View.OnClickListene
                             return;
                         }
 
-                        game.game_name = game_name;
-                        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                        game.players_id.obj = uid;
-                        game.players_usernames.obj = HomePage.user.username;
+                        GameState game = new GameState(game_name);
+                        game.addPlayer(HomePage.user.uid, HomePage.user.username);
                         FirebaseDatabase.getInstance().getReference("WaitingSessions").child(game_name)
                                 .setValue(game).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
-                                    FirebaseDatabase.getInstance().getReference("Users").child(uid)
+                                    FirebaseDatabase.getInstance().getReference("Users").child(HomePage.user.uid)
                                             .child("current_game_id").setValue(game_name);
                                     HomePage.user.current_game_id = game_name;
                                     startActivity(new Intent(CreateGame.this, WaitingSession.class));

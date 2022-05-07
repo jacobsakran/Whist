@@ -32,7 +32,6 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
 
     private Button log_out, create_game, refresh;
     private DatabaseReference reference;
-    private String id;
     private ProgressBar progress_bar;
     private LinearLayout layout;
 
@@ -79,19 +78,22 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                 layout.removeAllViews();
                 for (DataSnapshot child : snapshot.getChildren()) {
                     GameState game = child.getValue(GameState.class);
+                    assert game != null;
+
                     TextView text = new TextView(HomePage.this);
                     text.setTextSize(20);
                     text.setHint((String) game.game_name);
                     String text_to_show = "Click to join " + (String) game.game_name + " game";
                     text.setText(text_to_show);
                     layout.addView(text);
+
                     text.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             if (!user.current_game_id.equals("")) {
                                 String msg = "You are already in this game, exit to join a new one";
-                                startActivity(new Intent(HomePage.this, WaitingSession.class));
                                 Toast.makeText(HomePage.this, msg, Toast.LENGTH_LONG).show();
+                                startActivity(new Intent(HomePage.this, WaitingSession.class));
                                 return;
                             }
 
@@ -102,8 +104,8 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                                             GameState game = snapshot.getValue(GameState.class);
-                                            game.players_usernames.addValue(user.username);
-                                            game.players_id.addValue(user.uid);
+                                            assert game != null;
+                                            game.addPlayer(user.uid, user.username);
                                             FirebaseDatabase.getInstance().getReference("WaitingSessions").child(user.current_game_id)
                                                     .setValue(game).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                 @Override
@@ -143,7 +145,8 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
 
         FirebaseUser firebase_user = FirebaseAuth.getInstance().getCurrentUser();
         reference = FirebaseDatabase.getInstance().getReference("Users");
-        id = firebase_user.getUid();
+        assert firebase_user != null;
+        String id = firebase_user.getUid();
         viewGameServers();
 
         reference.child(id).addListenerForSingleValueEvent(new ValueEventListener() {

@@ -33,13 +33,14 @@ public class WaitingSession extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_waiting_session);
         game = null;
-
         exit = (Button) findViewById(R.id.exitWaitingSession);
+
         exit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 game.removeUserByUid(HomePage.user.uid);
                 if (game.players_id.obj == null) game = null;
+
                 FirebaseDatabase.getInstance().getReference("WaitingSessions").child(HomePage.user.current_game_id).setValue(game)
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
@@ -64,12 +65,13 @@ public class WaitingSession extends AppCompatActivity {
             @SuppressLint("SetTextI18n")
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.getValue(GameState.class) == null) {
+                game = snapshot.getValue(GameState.class);
+
+                if (game == null) {
                     snapshot.getRef().removeEventListener(this);
                     return;
                 }
 
-                game = snapshot.getValue(GameState.class);
                 Node players = game.players_usernames;
                 if (players != null) {
                     player1.setText((String) players.obj);
@@ -80,6 +82,7 @@ public class WaitingSession extends AppCompatActivity {
                     player2.setText((String) players.obj);
                     players = players.next;
                 } else player2.setText("Waiting For Player 2...");
+
                 if (players != null) {
                     player3.setText((String) players.obj);
                     players = players.next;
