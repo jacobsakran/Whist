@@ -86,46 +86,7 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                     String text_to_show = "Click to join " + (String) game.game_name + " game";
                     text.setText(text_to_show);
                     layout.addView(text);
-
-                    text.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            if (!user.current_game_id.equals("")) {
-                                String msg = "You are already in this game, exit to join a new one";
-                                Toast.makeText(HomePage.this, msg, Toast.LENGTH_LONG).show();
-                                startActivity(new Intent(HomePage.this, WaitingSession.class));
-                                return;
-                            }
-
-                            String game_name = ((TextView) view).getHint().toString().trim();
-                            user.current_game_id = game_name;
-                            FirebaseDatabase.getInstance().getReference("WaitingSessions").child(game_name)
-                                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                            GameState game = snapshot.getValue(GameState.class);
-                                            assert game != null;
-                                            game.addPlayer(user.uid, user.username);
-                                            FirebaseDatabase.getInstance().getReference("WaitingSessions").child(user.current_game_id)
-                                                    .setValue(game).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<Void> task) {
-                                                    if (task.isSuccessful()) {
-                                                        FirebaseDatabase.getInstance().getReference("Users")
-                                                                .child(user.uid).child("current_game_id").setValue(user.current_game_id);
-                                                        startActivity(new Intent(HomePage.this, WaitingSession.class));
-                                                    }
-                                                }
-                                            });
-                                        }
-
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError error) {
-
-                                        }
-                                    });
-                        }
-                    });
+                    text.setOnClickListener(gameServerClickListener());
                 }
 
             }
@@ -133,6 +94,48 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
+            }
+
+            private View.OnClickListener gameServerClickListener() {
+                return new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (!user.current_game_id.equals("")) {
+                            String msg = "You are already in this game, exit to join a new one";
+                            Toast.makeText(HomePage.this, msg, Toast.LENGTH_LONG).show();
+                            startActivity(new Intent(HomePage.this, WaitingSession.class));
+                            return;
+                        }
+
+                        String game_name = ((TextView) view).getHint().toString().trim();
+                        user.current_game_id = game_name;
+                        FirebaseDatabase.getInstance().getReference("WaitingSessions").child(game_name)
+                                .addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        GameState game = snapshot.getValue(GameState.class);
+                                        assert game != null;
+                                        game.addPlayer(user.uid, user.username);
+                                        FirebaseDatabase.getInstance().getReference("WaitingSessions").child(user.current_game_id)
+                                                .setValue(game).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful()) {
+                                                    FirebaseDatabase.getInstance().getReference("Users")
+                                                            .child(user.uid).child("current_game_id").setValue(user.current_game_id);
+                                                    startActivity(new Intent(HomePage.this, WaitingSession.class));
+                                                }
+                                            }
+                                        });
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                    }
+                                });
+                    }
+                };
             }
         });
     }
@@ -145,6 +148,7 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
 
         FirebaseUser firebase_user = FirebaseAuth.getInstance().getCurrentUser();
         reference = FirebaseDatabase.getInstance().getReference("Users");
+
         assert firebase_user != null;
         String id = firebase_user.getUid();
         viewGameServers();
