@@ -38,6 +38,12 @@ public class WaitingSession extends AppCompatActivity {
         setContentView(R.layout.activity_waiting_session);
         game = null;
         exit = (Button) findViewById(R.id.exitWaitingSession);
+        player1 = (TextView) findViewById(R.id.player1);
+        player2 = (TextView) findViewById(R.id.player2);
+        player3 = (TextView) findViewById(R.id.player3);
+        player4 = (TextView) findViewById(R.id.player4);
+        progressBar = (ProgressBar) findViewById(R.id.waitingSessionProgressBar);
+        progressBar.setVisibility(View.INVISIBLE);
 
         exit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,7 +69,6 @@ public class WaitingSession extends AppCompatActivity {
     }
 
     protected void StartGame() {
-        progressBar = (ProgressBar) findViewById(R.id.waitingSessionProgressBar);
         progressBar.setVisibility(View.VISIBLE);
 
         if (!HomePage.user.uid.equals((String) game.players_id.obj)) {
@@ -74,6 +79,7 @@ public class WaitingSession extends AppCompatActivity {
                             if (snapshot.exists()) {
                                 progressBar.setVisibility(View.INVISIBLE);
                                 startActivity(new Intent(WaitingSession.this, InGame.class));
+                                snapshot.getRef().removeEventListener(this);
                             }
                         }
 
@@ -111,12 +117,6 @@ public class WaitingSession extends AppCompatActivity {
     }
 
     protected void ShowPage() {
-        player1 = (TextView) findViewById(R.id.player1);
-        player2 = (TextView) findViewById(R.id.player2);
-        player3 = (TextView) findViewById(R.id.player3);
-        player4 = (TextView) findViewById(R.id.player4);
-
-
         String game_id = HomePage.user.current_game_id;
         FirebaseDatabase.getInstance().getReference("WaitingSessions").child(game_id).addValueEventListener(new ValueEventListener() {
             @SuppressLint("SetTextI18n")
