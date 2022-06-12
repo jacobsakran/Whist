@@ -58,20 +58,36 @@ public class CreateGame extends AppCompatActivity implements View.OnClickListene
                             return;
                         }
 
-                        GameState game = new GameState(game_name);
-                        game.addPlayer(HomePage.user.uid, HomePage.user.username);
-                        FirebaseDatabase.getInstance().getReference("WaitingSessions").child(game_name)
-                                .setValue(game).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        FirebaseDatabase.getInstance().getReference("ActiveGames").addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    FirebaseDatabase.getInstance().getReference("Users").child(HomePage.user.uid)
-                                            .child("current_game_id").setValue(game_name);
-                                    HomePage.user.current_game_id = game_name;
-                                    startActivity(new Intent(CreateGame.this, WaitingSession.class));
-                                } else Toast.makeText(CreateGame.this, "Failed to create game, try again", Toast.LENGTH_LONG).show();
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                if (snapshot.hasChild(game_name)) {
+                                    game_name_edit_text.setError("Game name already exists");
+                                    return;
+                                }
+
+                                GameState game = new GameState(game_name);
+                                game.addPlayer(HomePage.user.uid, HomePage.user.username);
+                                FirebaseDatabase.getInstance().getReference("WaitingSessions").child(game_name)
+                                        .setValue(game).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful()) {
+                                                    FirebaseDatabase.getInstance().getReference("Users").child(HomePage.user.uid)
+                                                            .child("current_game_id").setValue(game_name);
+                                                    HomePage.user.current_game_id = game_name;
+                                                    startActivity(new Intent(CreateGame.this, WaitingSession.class));
+                                                } else Toast.makeText(CreateGame.this, "Failed to create game, try again", Toast.LENGTH_LONG).show();
+                                            }
+                                        });
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
                             }
                         });
+
                     }
 
                     @Override

@@ -9,11 +9,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -26,6 +29,7 @@ import java.util.Map;
 public class WaitingSession extends AppCompatActivity {
     private GameState game;
     private TextView player1, player2, player3, player4;
+    private ProgressBar progressBar;
     private Button exit;
 
     @Override
@@ -55,10 +59,63 @@ public class WaitingSession extends AppCompatActivity {
             }
         });
 
+        ShowPage();
+    }
+
+    protected void StartGame() {
+        progressBar = (ProgressBar) findViewById(R.id.waitingSessionProgressBar);
+        progressBar.setVisibility(View.VISIBLE);
+
+        if (!HomePage.user.uid.equals((String) game.players_id.obj)) {
+            FirebaseDatabase.getInstance().getReference("ActiveGames").child(game.game_name)
+                    .addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (snapshot.exists()) {
+                                progressBar.setVisibility(View.INVISIBLE);
+                                startActivity(new Intent(WaitingSession.this, InGame.class));
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+
+            return;
+        }
+
+        FirebaseDatabase.getInstance().getReference("WaitingSessions").child(game.game_name).setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (!task.isSuccessful()) {
+                    Toast.makeText(WaitingSession.this, "Failed to start game", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                FirebaseDatabase.getInstance().getReference("ActiveGames").child(game.game_name).setValue(game)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    progressBar.setVisibility(View.INVISIBLE);
+                                    startActivity(new Intent(WaitingSession.this, InGame.class));
+                                }
+                                else Toast.makeText(WaitingSession.this, "Failed to start game", Toast.LENGTH_LONG).show();
+                            }
+                        });
+            }
+        });
+
+    }
+
+    protected void ShowPage() {
         player1 = (TextView) findViewById(R.id.player1);
         player2 = (TextView) findViewById(R.id.player2);
         player3 = (TextView) findViewById(R.id.player3);
         player4 = (TextView) findViewById(R.id.player4);
+
 
         String game_id = HomePage.user.current_game_id;
         FirebaseDatabase.getInstance().getReference("WaitingSessions").child(game_id).addValueEventListener(new ValueEventListener() {
@@ -88,7 +145,11 @@ public class WaitingSession extends AppCompatActivity {
                     players = players.next;
                 } else player3.setText("Waiting For Player 3...");
 
-                if (players != null) player4.setText((String) players.obj);
+                if (players != null) {
+                    player4.setText((String) players.obj);
+                    snapshot.getRef().removeEventListener(this);
+                    StartGame();
+                }
                 else  player4.setText("Waiting For Player 4...");
 
             }
@@ -98,6 +159,5 @@ public class WaitingSession extends AppCompatActivity {
 
             }
         });
-
     }
 }
