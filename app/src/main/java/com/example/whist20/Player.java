@@ -16,7 +16,7 @@ public class Player {
         this.cards = new CardsSet();
     }
 
-    public void openNewCard(@NonNull Dict dict) {
+    public void openNewCard(@NonNull Dict dict, GameState game) {
         this.cards.addCard(dict.randomCard());
     }
 

@@ -15,4 +15,15 @@ public class Dealer extends Player {
     public String userName() {
         return this.DealerName;
     }
+
+    @Override
+    public void openNewCard(Dict dict, GameState game) {
+        Node iterator = game.players.head;
+        while(iterator != null){
+            if(((Player)iterator.obj).cards.sum() > this.cards.sum()){
+                this.openNewCard(dict, game);
+                return;
+            }
+        }
+    }
 }
