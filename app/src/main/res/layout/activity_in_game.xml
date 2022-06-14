@@ -5,7 +5,211 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background"
-    tools:context=".InGame">
+    tools:context=".InGame"
+    tools:layout_editor_absoluteX="0dp"
+    tools:layout_editor_absoluteY="0dp">
+
+    <ImageView
+        android:id="@+id/imageView27"
+        android:layout_width="74dp"
+        android:layout_height="50dp"
+        android:rotation="90"
+        tools:layout_editor_absoluteX="71dp"
+        tools:layout_editor_absoluteY="267dp"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <ImageView
+        android:id="@+id/imageView40"
+        android:layout_width="74dp"
+        android:layout_height="50dp"
+        android:rotation="-90"
+        tools:layout_editor_absoluteX="270dp"
+        tools:layout_editor_absoluteY="267dp"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <ImageView
+        android:id="@+id/imageView41"
+        android:layout_width="74dp"
+        android:layout_height="50dp"
+        android:rotation="-90"
+        tools:layout_editor_absoluteX="270dp"
+        tools:layout_editor_absoluteY="290dp"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <ImageView
+        android:id="@+id/imageView42"
+        android:layout_width="74dp"
+        android:layout_height="50dp"
+        android:rotation="-90"
+        tools:layout_editor_absoluteX="270dp"
+        tools:layout_editor_absoluteY="317dp"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <ImageView
+        android:id="@+id/imageView43"
+        android:layout_width="74dp"
+        android:layout_height="50dp"
+        android:rotation="-90"
+        tools:layout_editor_absoluteX="270dp"
+        tools:layout_editor_absoluteY="340dp"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <ImageView
+        android:id="@+id/imageView44"
+        android:layout_width="74dp"
+        android:layout_height="50dp"
+        android:rotation="-90"
+        tools:layout_editor_absoluteX="270dp"
+        tools:layout_editor_absoluteY="367dp"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <ImageView
+        android:id="@+id/imageView45"
+        android:layout_width="74dp"
+        android:layout_height="50dp"
+        android:rotation="-90"
+        tools:layout_editor_absoluteX="270dp"
+        tools:layout_editor_absoluteY="390dp"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <ImageView
+        android:id="@+id/imageView46"
+        android:layout_width="74dp"
+        android:layout_height="50dp"
+        android:rotation="-90"
+        tools:layout_editor_absoluteX="270dp"
+        tools:layout_editor_absoluteY="417dp"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <ImageView
+        android:id="@+id/imageView47"
+        android:layout_width="74dp"
+        android:layout_height="50dp"
+        android:rotation="-90"
+        tools:layout_editor_absoluteX="270dp"
+        tools:layout_editor_absoluteY="440dp"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <ImageView
+        android:id="@+id/imageView33"
+        android:layout_width="74dp"
+        android:layout_height="50dp"
+        android:rotation="90"
+        tools:layout_editor_absoluteX="71dp"
+        tools:layout_editor_absoluteY="290dp"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <ImageView
+        android:id="@+id/imageView34"
+        android:layout_width="74dp"
+        android:layout_height="50dp"
+        android:rotation="90"
+        tools:layout_editor_absoluteX="71dp"
+        tools:layout_editor_absoluteY="317dp"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <ImageView
+        android:id="@+id/imageView35"
+        android:layout_width="74dp"
+        android:layout_height="50dp"
+        android:rotation="90"
+        tools:layout_editor_absoluteX="71dp"
+        tools:layout_editor_absoluteY="340dp"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <ImageView
+        android:id="@+id/imageView36"
+        android:layout_width="74dp"
+        android:layout_height="50dp"
+        android:rotation="90"
+        tools:layout_editor_absoluteX="71dp"
+        tools:layout_editor_absoluteY="367dp"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <ImageView
+        android:id="@+id/imageView37"
+        android:layout_width="74dp"
+        android:layout_height="50dp"
+        android:rotation="90"
+        tools:layout_editor_absoluteX="71dp"
+        tools:layout_editor_absoluteY="390dp"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <ImageView
+        android:id="@+id/imageView38"
+        android:layout_width="74dp"
+        android:layout_height="50dp"
+        android:rotation="90"
+        tools:layout_editor_absoluteX="71dp"
+        tools:layout_editor_absoluteY="417dp"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <ImageView
+        android:id="@+id/imageView39"
+        android:layout_width="74dp"
+        android:layout_height="50dp"
+        android:rotation="90"
+        tools:layout_editor_absoluteX="71dp"
+        tools:layout_editor_absoluteY="440dp"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="50dp"
+        android:layout_height="74dp"
+        tools:layout_editor_absoluteX="95dp"
+        tools:layout_editor_absoluteY="502dp"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <ImageView
+        android:id="@+id/imageView57"
+        android:layout_width="50dp"
+        android:layout_height="74dp"
+        android:rotation="180"
+        tools:layout_editor_absoluteX="270dp"
+        tools:layout_editor_absoluteY="173dp"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <ImageView
+        android:id="@+id/imageView58"
+        android:layout_width="50dp"
+        android:layout_height="74dp"
+        android:rotation="180"
+        tools:layout_editor_absoluteX="245dp"
+        tools:layout_editor_absoluteY="173dp"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <ImageView
+        android:id="@+id/imageView5"
+        android:layout_width="50dp"
+        android:layout_height="74dp"
+        tools:layout_editor_absoluteX="120dp"
+        tools:layout_editor_absoluteY="502dp"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <ImageView
+        android:id="@+id/imageView6"
+        android:layout_width="50dp"
+        android:layout_height="74dp"
+        tools:layout_editor_absoluteX="145dp"
+        tools:layout_editor_absoluteY="502dp"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <ImageView
+        android:id="@+id/imageView7"
+        android:layout_width="50dp"
+        android:layout_height="74dp"
+        tools:layout_editor_absoluteX="170dp"
+        tools:layout_editor_absoluteY="502dp"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <ImageView
+        android:id="@+id/imageView8"
+        android:layout_width="50dp"
+        android:layout_height="74dp"
+        tools:layout_editor_absoluteX="195dp"
+        tools:layout_editor_absoluteY="502dp"
+        tools:srcCompat="@tools:sample/avatars" />
 
     <Button
         android:id="@+id/hit"
@@ -68,4 +272,83 @@
         android:text="player2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="50dp"
+        android:layout_height="74dp"
+        tools:layout_editor_absoluteX="220dp"
+        tools:layout_editor_absoluteY="502dp"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="50dp"
+        android:layout_height="74dp"
+        tools:layout_editor_absoluteX="245dp"
+        tools:layout_editor_absoluteY="502dp"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="50dp"
+        android:layout_height="74dp"
+        tools:layout_editor_absoluteX="270dp"
+        tools:layout_editor_absoluteY="502dp"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <ImageView
+        android:id="@+id/imageView54"
+        android:layout_width="50dp"
+        android:layout_height="74dp"
+        android:rotation="180"
+        tools:layout_editor_absoluteX="220dp"
+        tools:layout_editor_absoluteY="173dp"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <ImageView
+        android:id="@+id/imageView52"
+        android:layout_width="50dp"
+        android:layout_height="74dp"
+        android:rotation="180"
+        tools:layout_editor_absoluteX="195dp"
+        tools:layout_editor_absoluteY="173dp"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <ImageView
+        android:id="@+id/imageView51"
+        android:layout_width="50dp"
+        android:layout_height="74dp"
+        android:rotation="180"
+        tools:layout_editor_absoluteX="170dp"
+        tools:layout_editor_absoluteY="173dp"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <ImageView
+        android:id="@+id/imageView48"
+        android:layout_width="50dp"
+        android:layout_height="74dp"
+        android:rotation="180"
+        tools:layout_editor_absoluteX="145dp"
+        tools:layout_editor_absoluteY="173dp"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <ImageView
+        android:id="@+id/imageView49"
+        android:layout_width="50dp"
+        android:layout_height="74dp"
+        android:rotation="180"
+        tools:layout_editor_absoluteX="124dp"
+        tools:layout_editor_absoluteY="173dp"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <ImageView
+        android:id="@+id/imageView53"
+        android:layout_width="50dp"
+        android:layout_height="74dp"
+        android:rotation="180"
+        tools:layout_editor_absoluteX="95dp"
+        tools:layout_editor_absoluteY="173dp"
+        tools:srcCompat="@tools:sample/avatars" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
