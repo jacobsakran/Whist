@@ -56,6 +56,8 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
 
     @Override
     public void onClick(View view) {
+        if (!user.current_game_id.equals("")) ForwardUserToCurrentGame();
+
         switch (view.getId()) {
             case R.id.logOutButton:
                 logOut();
@@ -93,7 +95,7 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                             if (!user.current_game_id.equals("")) {
                                 String msg = "You are already in this game, exit to join a new one";
                                 Toast.makeText(HomePage.this, msg, Toast.LENGTH_LONG).show();
-                                startActivity(new Intent(HomePage.this, WaitingSession.class));
+                                ForwardUserToCurrentGame();
                                 return;
                             }
 
@@ -137,6 +139,41 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
         });
     }
 
+    private void ForwardUserToCurrentGame() {
+        FirebaseDatabase.getInstance().getReference("WaitingSessions").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.hasChild(user.current_game_id)) {
+                    startActivity(new Intent(HomePage.this, WaitingSession.class));
+                    return;
+                }
+                FirebaseDatabase.getInstance().getReference("ActiveGames").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.hasChild(user.current_game_id)) {
+                            startActivity(new Intent(HomePage.this, InGame.class));
+                            return;
+                        }
+
+                        user.current_game_id = "";
+                        FirebaseDatabase.getInstance().getReference("Users").child(user.uid).child("current_game_id").setValue("");
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+    }
+
     private void viewHomePage() {
         progress_bar.setVisibility(View.VISIBLE);
         refresh.setVisibility(View.INVISIBLE);
@@ -159,7 +196,7 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                     log_out.setVisibility(View.VISIBLE);
                     refresh.setVisibility(View.VISIBLE);
 
-                    if (!user.current_game_id.equals("")) startActivity(new Intent(HomePage.this, WaitingSession.class));
+                    if (!user.current_game_id.equals("")) ForwardUserToCurrentGame();
                     // the logged in user is loaded into the "user" parameter.
                 }
             }
