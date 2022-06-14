@@ -13,10 +13,11 @@ public class Node {
         this.obj = obj;
         this.next = null;
     }
-    public Object getByIndex(int index){
+
+    public Object getByIndex(int index) {
         Node iterator = this;
-        int counter =0;
-        while (iterator.next != null && counter < index){
+        int counter = 0;
+        while (iterator.next != null && counter < index) {
             iterator = iterator.next;
             counter += 1;
         }

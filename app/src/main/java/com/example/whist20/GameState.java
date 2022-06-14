@@ -13,7 +13,9 @@ public class GameState {
     public int maxPlayersNum;
     public Dict dict;
 
-    public GameState() {}
+    public GameState() {
+    }
+
     public GameState(String game_name) {
         this.players = new MyList();
         this.currentPlayer = new Node();
@@ -24,14 +26,14 @@ public class GameState {
         this.dict = new Dict();
     }
 
-    public void addPlayer(Player player){
+    public void addPlayer(Player player) {
         this.players.addNode(player);
         this.numOfPlayers = this.numOfPlayers + 1;
         this.currentPlayer = this.players.head;
     }
 
     public void removePlayerByUid(String uid) {
-        //if (this.is_active) return;
+        if (this.is_active) return;
         Player to_remove = new Player();
         to_remove.uid = uid;
         this.players.removeByValue(to_remove);
