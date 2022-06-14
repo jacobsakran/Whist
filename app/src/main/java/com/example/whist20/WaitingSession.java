@@ -123,37 +123,41 @@ public class WaitingSession extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 game = snapshot.getValue(GameState.class);
-
+                GameState tmp = game.convertSnapshotToGameState(snapshot);
                 if (game == null) {
+                    Toast.makeText(WaitingSession.this, "Failed to start game", Toast.LENGTH_LONG).show();
                     snapshot.getRef().removeEventListener(this);
                     return;
                 }
 
-                Node players = game.players.head;
+                Node players = tmp.players.head;
+                Toast.makeText(WaitingSession.this, ((Player) players.obj).userName, Toast.LENGTH_LONG).show();
+                /*
                 if (players != null) {
-                    player1.setText(((Player) players.obj).userName);
+                    HashMap<String, Object> convert = (HashMap<String, Object>) players.obj;
+                    player1.setText(convert.get("userName").toString());
                     players = players.next;
                 } else player1.setText("Waiting For Player 1...");
 
                 if (players != null) {
-                    player2.setText(((Player) players.obj).userName);
+                    HashMap<String, Object> convert = (HashMap<String, Object>) players.obj;
+                    player2.setText(convert.get("userName").toString());
                     players = players.next;
                 } else player2.setText("Waiting For Player 2...");
 
                 if (players != null) {
-                    player3.setText(((Player) players.obj).userName);
-                    players = players.next;
+                    HashMap<String, Object> convert = (HashMap<String, Object>) players.obj;
+                    player3.setText(convert.get("userName").toString());
                 } else player3.setText("Waiting For Player 3...");
 
                 if (players != null) {
-                    player4.setText(((Player) players.obj).userName);
+                    HashMap<String, Object> convert = (HashMap<String, Object>) players.obj;
+                    player4.setText(convert.get("userName").toString());
                     snapshot.getRef().removeEventListener(this);
                     StartGame();
                 }
-                else  player4.setText("Waiting For Player 4...");
-
+                else  player4.setText("Waiting For Player 4...");*/
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 

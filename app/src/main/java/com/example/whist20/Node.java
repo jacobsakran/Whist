@@ -14,7 +14,7 @@ public class Node {
         this.next = null;
     }
 
-    public Object getByIndex(int index) {
+    public Object findByIndex(int index) {
         Node iterator = this;
         int counter = 0;
         while (iterator.next != null && counter < index) {

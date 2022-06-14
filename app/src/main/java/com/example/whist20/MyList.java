@@ -1,8 +1,8 @@
 package com.example.whist20;
 
 public class MyList {
-    Node head;
-    int size;
+    public Node head;
+    public int size;
 
     public MyList() {
         this.size = 0;
@@ -14,8 +14,8 @@ public class MyList {
         this.size++;
     }
 
-    public Object getByIndex(int index) {
-        return head.getByIndex(index);
+    public Object findByIndex(int index) {
+        return head.findByIndex(index);
     }
 
     public void removeByIndex(int index) {

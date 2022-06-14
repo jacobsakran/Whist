@@ -4,8 +4,8 @@ package com.example.whist20;
 import java.util.Vector;
 
 public class CardsSet {
-    MyList cards;
-    int cardsSum;
+    public MyList cards;
+    public int cardsSum;
 
     public CardsSet() {
         this.cardsSum = 0;
@@ -17,7 +17,7 @@ public class CardsSet {
         this.cardsSum += card.value;
     }
 
-    public int getSum() {
+    public int sum() {
         return this.cardsSum < 22 ? this.cardsSum : -1;
     }
 }

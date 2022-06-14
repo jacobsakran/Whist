@@ -55,10 +55,6 @@ public class CreateGame extends AppCompatActivity implements View.OnClickListene
                             game_name_edit_text.setError("Game name already exists");
                             return;
                         }
-                        GameState game = new GameState(game_name);
-                        game.addPlayer(new Player(HomePage.user.uid, HomePage.user.username));
-                        FirebaseDatabase.getInstance().getReference("WaitingSessions").child(game_name)
-                                .setValue(game).addOnCompleteListener(new OnCompleteListener<Void>() {
 
                         FirebaseDatabase.getInstance().getReference("ActiveGames").addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
@@ -69,7 +65,8 @@ public class CreateGame extends AppCompatActivity implements View.OnClickListene
                                 }
 
                                 GameState game = new GameState(game_name);
-                                game.addPlayer(HomePage.user.uid, HomePage.user.username);
+                                game.addPlayer(new Player(HomePage.user.uid, HomePage.user.username));
+                                Toast.makeText(CreateGame.this, "adding...", Toast.LENGTH_LONG).show();
                                 FirebaseDatabase.getInstance().getReference("WaitingSessions").child(game_name)
                                         .setValue(game).addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
@@ -98,6 +95,5 @@ public class CreateGame extends AppCompatActivity implements View.OnClickListene
                     }
                 });
     }
-
 }
 

@@ -1,7 +1,7 @@
 package com.example.whist20;
 
 public class Dealer extends Player {
-    String DealerName;
+    public String DealerName;
 
     public Dealer() {
     }
@@ -12,7 +12,7 @@ public class Dealer extends Player {
     }
 
     @Override
-    public String getName() {
+    public String userName() {
         return this.DealerName;
     }
 }

@@ -1,9 +1,11 @@
 package com.example.whist20;
 
+import androidx.annotation.NonNull;
+
 public class Player {
-    String uid;
-    String userName;
-    CardsSet cards;
+    public String uid;
+    public String userName;
+    public CardsSet cards;
 
     public Player() {
     }
@@ -14,19 +16,19 @@ public class Player {
         this.cards = new CardsSet();
     }
 
-    public void openNewCard(Dict dict) {
-        this.cards.addCard(dict.getRandomCard());
+    public void openNewCard(@NonNull Dict dict) {
+        this.cards.addCard(dict.randomCard());
     }
 
-    public int getPlayerScore() {
-        return this.cards.getSum();
+    public int playerScore() {
+        return this.cards.sum();
     }
 
-    public String getName() {
+    public String userName() {
         return this.userName;
     }
 
-    public boolean equals(Player p) {
+    public boolean equals(@NonNull Player p) {
         return this.uid.equals(p.uid);
     }
 }
