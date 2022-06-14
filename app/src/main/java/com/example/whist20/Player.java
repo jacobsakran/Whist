@@ -11,7 +11,7 @@ public class Player {
         this.userName = userName;
         this.cards = new CardsSet();
     }
-    public void openNewCard(Dict dict){
+    public void openNewCard(Dict dict, GameState game){
         this.cards.addCard(dict.getRandomCard());
     }
     public int getPlayerScore(){
