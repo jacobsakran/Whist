@@ -29,9 +29,7 @@ public class CreateGame extends AppCompatActivity implements View.OnClickListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_game);
-
         game_name_edit_text = (EditText) findViewById(R.id.createGameName);
-
         create_game = (Button) findViewById(R.id.createGameCreateButton);
         create_game.setOnClickListener(this);
     }
@@ -59,7 +57,7 @@ public class CreateGame extends AppCompatActivity implements View.OnClickListene
                         }
 
                         GameState game = new GameState(game_name);
-                        game.addPlayer(HomePage.user.uid, HomePage.user.username);
+                        game.addPlayer(new Player(HomePage.user.uid, HomePage.user.username));
                         FirebaseDatabase.getInstance().getReference("WaitingSessions").child(game_name)
                                 .setValue(game).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override

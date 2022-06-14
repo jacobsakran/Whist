@@ -105,7 +105,7 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                                             GameState game = snapshot.getValue(GameState.class);
                                             assert game != null;
-                                            game.addPlayer(user.uid, user.username);
+                                            game.addPlayer(new Player(user.uid, user.username));
                                             FirebaseDatabase.getInstance().getReference("WaitingSessions").child(user.current_game_id)
                                                     .setValue(game).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                 @Override

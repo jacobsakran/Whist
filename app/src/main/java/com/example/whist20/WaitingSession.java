@@ -38,8 +38,8 @@ public class WaitingSession extends AppCompatActivity {
         exit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                game.removeUserByUid(HomePage.user.uid);
-                if (game.players_id.obj == null) game = null;
+                game.removePlayerByUid(HomePage.user.uid);
+                if (game.players.head.obj == null) game = null;
 
                 FirebaseDatabase.getInstance().getReference("WaitingSessions").child(HomePage.user.current_game_id).setValue(game)
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -72,23 +72,23 @@ public class WaitingSession extends AppCompatActivity {
                     return;
                 }
 
-                Node players = game.players_usernames;
+                Node players = game.players.head;
                 if (players != null) {
-                    player1.setText((String) players.obj);
+                    player1.setText(((Player) players.obj).userName);
                     players = players.next;
                 } else player1.setText("Waiting For Player 1...");
 
                 if (players != null) {
-                    player2.setText((String) players.obj);
+                    player2.setText(((Player) players.obj).userName);
                     players = players.next;
                 } else player2.setText("Waiting For Player 2...");
 
                 if (players != null) {
-                    player3.setText((String) players.obj);
+                    player3.setText(((Player) players.obj).userName);
                     players = players.next;
                 } else player3.setText("Waiting For Player 3...");
 
-                if (players != null) player4.setText((String) players.obj);
+                if (players != null) player4.setText(((Player) players.obj).userName);
                 else  player4.setText("Waiting For Player 4...");
 
             }
