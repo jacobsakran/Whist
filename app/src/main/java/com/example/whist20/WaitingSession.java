@@ -133,6 +133,8 @@ public class WaitingSession extends AppCompatActivity {
                 if (players != null) {
                     player1.setText((String) players.obj);
                     players = players.next;
+                    snapshot.getRef().removeEventListener(this);
+                    StartGame();
                 } else player1.setText("Waiting For Player 1...");
 
                 if (players != null) {
