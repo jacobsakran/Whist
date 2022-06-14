@@ -56,6 +56,8 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
 
     @Override
     public void onClick(View view) {
+        if (!user.current_game_id.equals("")) ForwardUserToCurrentGame();
+
         switch (view.getId()) {
             case R.id.logOutButton:
                 logOut();
