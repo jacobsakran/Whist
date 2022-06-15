@@ -122,17 +122,15 @@ public class WaitingSession extends AppCompatActivity {
             @SuppressLint("SetTextI18n")
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                game = snapshot.getValue(GameState.class);
-                GameState tmp = game.convertSnapshotToGameState(snapshot);
+                game = GameState.convertSnapshotToGameState(snapshot);
+
                 if (game == null) {
                     Toast.makeText(WaitingSession.this, "Failed to start game", Toast.LENGTH_LONG).show();
                     snapshot.getRef().removeEventListener(this);
                     return;
                 }
 
-                Node players = tmp.players.head;
-                Toast.makeText(WaitingSession.this, ((Player) players.obj).userName, Toast.LENGTH_LONG).show();
-                /*
+                Node players = game.players.head;
                 if (players != null) {
                     HashMap<String, Object> convert = (HashMap<String, Object>) players.obj;
                     player1.setText(convert.get("userName").toString());
@@ -156,7 +154,7 @@ public class WaitingSession extends AppCompatActivity {
                     snapshot.getRef().removeEventListener(this);
                     StartGame();
                 }
-                else  player4.setText("Waiting For Player 4...");*/
+                else  player4.setText("Waiting For Player 4...");
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {

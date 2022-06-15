@@ -55,30 +55,30 @@ public class GameState {
         return this.currentPlayerTurn();
     }
 
-    public GameState convertSnapshotToGameState(@NonNull DataSnapshot snapshot) {
-        GameState tmp = snapshot.getValue(GameState.class);
-        GameState game = new GameState(tmp.game_name);
-
+    public static GameState convertSnapshotToGameState(@NonNull DataSnapshot snapshot) {
+        GameState game = new GameState(snapshot.child("game_name").getValue(String.class));
+        snapshot.child("players").child("head");
         // Converting players
-        Node iterator = tmp.players.head;
-        while (iterator != null) {
-            HashMap<String, Object> convert = (HashMap<String, Object>) iterator.obj;
-            Player player = new Player();
-            player.userName = convert.get("userName").toString();
-            player.uid = convert.get("uid").toString();
+        DataSnapshot players_iterator =  snapshot.child("players").child("head");
+        while (players_iterator.exists()) {
+            Player player = players_iterator.child("obj").getValue(Player.class);
+            assert player != null;
+            player.cards = new CardsSet();
 
-            CardsSet card_set = (CardsSet) convert.get("cards");
-            Node cards_iterator = (Node) card_set.cards.head;
-            player.cards = null;
+            DataSnapshot cards_iterator = players_iterator.child("obj").child("cards").child("cards").child("head");
+            while (cards_iterator.exists()) {
+                Card card = cards_iterator.child("obj").getValue(Card.class);
+                player.cards.addCard(card);
+                cards_iterator = cards_iterator.child("next");
+            }
 
             game.players.addNode(player);
-            iterator = iterator.next;
+            players_iterator = players_iterator.child("next");
         }
 
         // Converting currentPlayer
-        /*
-        HashMap<String, Object> convert = (HashMap<String, Object>) tmp.currentPlayer.obj;
-        String current_player_uid = convert.get("uid").toString();
+        String current_player_uid = snapshot.child("currentPlayer").child("obj").child("uid").getValue(String.class);
+        Node iterator = game.players.head;
         while (iterator != null) {
             if (((Player) iterator.obj).uid.equals(current_player_uid)) {
                 game.currentPlayer = iterator;
@@ -86,12 +86,11 @@ public class GameState {
             }
             iterator = iterator.next;
         }
-        */
+
         // Converting dict
         game.dict = null; //game.dict.convertSnapshotToDict(snapshot.child("dict"));
-        game.numOfPlayers = tmp.numOfPlayers;
-        game.is_active = tmp.is_active;
-        game.maxPlayersNum = tmp.maxPlayersNum;
+        game.is_active = snapshot.child("is_active").getValue(boolean.class);
+        game.maxPlayersNum = snapshot.child("maxPlayersNum").getValue(int.class);
         return game;
     }
 }
