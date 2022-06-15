@@ -2,7 +2,7 @@ package com.example.whist20;
 
 import androidx.annotation.NonNull;
 
-public class Player {
+public class Player extends Object{
     public String uid;
     public String userName;
     public CardsSet cards;
@@ -28,7 +28,8 @@ public class Player {
         return this.userName;
     }
 
-    public boolean equals(@NonNull Player p) {
-        return this.uid.equals(p.uid);
+    @Override
+    public boolean equals(@NonNull Object p) {
+        return this.uid.equals(((Player) p).uid);
     }
 }

@@ -1,5 +1,7 @@
 package com.example.whist20;
 
+import androidx.annotation.NonNull;
+
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.core.SnapshotHolder;
@@ -34,36 +36,22 @@ public class Dict {
         return tmp;
     }
 
-    public Dict convertSnapshotToDict(DataSnapshot snapshot) {
-        Dict tmp = snapshot.getValue(Dict.class);
+    public static Dict convertSnapshotToDict(@NonNull DataSnapshot snapshot) {
+        if (!snapshot.exists()) return null;
         Dict dict = new Dict();
-        Node cards_iterator = (Node) tmp.freeCards.head;
 
-        while (cards_iterator != null) {
-            HashMap<String, Object> convert_card = (HashMap<String, Object>) cards_iterator.obj;
-            Card card = new Card();
-            card.value = (int) convert_card.get("value");
-            card.suit = (Suit) convert_card.get("suit");
-
+        DataSnapshot iterator = snapshot.child("freeCards").child("head");
+        while (iterator.exists()) {
+            Card card = iterator.child("obj").getValue(Card.class);
             dict.freeCards.addNode(card);
-            cards_iterator = cards_iterator.next;
+            iterator = iterator.child("next");
         }
 
-        cards_iterator = (Node) tmp.usedCards.head;
-        while (cards_iterator != null) {
-            HashMap<String, Object> convert_card = (HashMap<String, Object>) cards_iterator.obj;
-            Card card = new Card();
-            card.value = (int) convert_card.get("value");
-            card.suit = (Suit) convert_card.get("suit");
-
+        iterator = snapshot.child("userCards").child("head");
+        while (iterator.exists()) {
+            Card card = iterator.child("obj").getValue(Card.class);
             dict.usedCards.addNode(card);
-            cards_iterator = cards_iterator.next;
-        }
-
-        cards_iterator = (Node) tmp.suitList.head;
-        while (cards_iterator != null) {
-            dict.suitList.addNode((Suit) cards_iterator.obj);
-            cards_iterator = cards_iterator.next;
+            iterator = iterator.child("next");
         }
 
         return dict;

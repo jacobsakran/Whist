@@ -125,32 +125,29 @@ public class WaitingSession extends AppCompatActivity {
                 game = GameState.convertSnapshotToGameState(snapshot);
 
                 if (game == null) {
-                    Toast.makeText(WaitingSession.this, "Failed to start game", Toast.LENGTH_LONG).show();
                     snapshot.getRef().removeEventListener(this);
+                    startActivity(new Intent(WaitingSession.this, HomePage.class));
                     return;
                 }
 
                 Node players = game.players.head;
                 if (players != null) {
-                    HashMap<String, Object> convert = (HashMap<String, Object>) players.obj;
-                    player1.setText(convert.get("userName").toString());
+                    player1.setText(((Player) players.obj).userName);
                     players = players.next;
                 } else player1.setText("Waiting For Player 1...");
 
                 if (players != null) {
-                    HashMap<String, Object> convert = (HashMap<String, Object>) players.obj;
-                    player2.setText(convert.get("userName").toString());
+                    player2.setText(((Player) players.obj).userName);
                     players = players.next;
                 } else player2.setText("Waiting For Player 2...");
 
                 if (players != null) {
-                    HashMap<String, Object> convert = (HashMap<String, Object>) players.obj;
-                    player3.setText(convert.get("userName").toString());
+                    player3.setText(((Player) players.obj).userName);
+                    players = players.next;
                 } else player3.setText("Waiting For Player 3...");
 
                 if (players != null) {
-                    HashMap<String, Object> convert = (HashMap<String, Object>) players.obj;
-                    player4.setText(convert.get("userName").toString());
+                    player4.setText(((Player) players.obj).userName);
                     snapshot.getRef().removeEventListener(this);
                     StartGame();
                 }

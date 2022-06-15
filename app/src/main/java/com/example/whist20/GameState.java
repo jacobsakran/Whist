@@ -56,8 +56,9 @@ public class GameState {
     }
 
     public static GameState convertSnapshotToGameState(@NonNull DataSnapshot snapshot) {
+        if (!snapshot.exists()) return null;
         GameState game = new GameState(snapshot.child("game_name").getValue(String.class));
-        snapshot.child("players").child("head");
+
         // Converting players
         DataSnapshot players_iterator =  snapshot.child("players").child("head");
         while (players_iterator.exists()) {
@@ -88,7 +89,7 @@ public class GameState {
         }
 
         // Converting dict
-        game.dict = null; //game.dict.convertSnapshotToDict(snapshot.child("dict"));
+        game.dict = Dict.convertSnapshotToDict(snapshot.child("dict"));
         game.is_active = snapshot.child("is_active").getValue(boolean.class);
         game.maxPlayersNum = snapshot.child("maxPlayersNum").getValue(int.class);
         return game;

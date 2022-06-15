@@ -21,6 +21,7 @@ public class MyList {
     public void removeByIndex(int index) {
         if (index == 0) {
             this.head = this.head.next;
+            if (this.head == null) this.head = new Node();
             this.size--;
             return;
         }
@@ -39,6 +40,7 @@ public class MyList {
     public void removeByValue(Object obj) {
         if (this.head.obj.equals(obj)) {
             this.head = this.head.next;
+            if (this.head == null) this.head = new Node();
             this.size--;
             return;
         }
