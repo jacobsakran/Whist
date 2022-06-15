@@ -287,36 +287,47 @@
         app:layout_constraintTop_toBottomOf="@+id/card7" />
 
     <TextView
-        android:id="@+id/username"
+        android:id="@+id/playerUsername1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
+        android:layout_marginTop="19dp"
+        android:layout_marginBottom="44dp"
         android:text="username"
         app:layout_constraintBottom_toTopOf="@+id/missButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/card3" />
 
     <TextView
-        android:id="@+id/otherPlayer1"
+        android:id="@+id/playerUsername4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="308dp"
+        android:layout_marginTop="356dp"
+        android:layout_marginEnd="9dp"
+        android:layout_marginBottom="282dp"
         android:rotation="90"
         android:text="player1"
+        app:layout_constraintBottom_toTopOf="@+id/hitButton"
+        app:layout_constraintEnd_toStartOf="@+id/card25"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/otherPlayer2"
+        android:id="@+id/playerUsername2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="308dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="348dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="290dp"
         android:rotation="-90"
         android:text="player2"
+        app:layout_constraintBottom_toTopOf="@+id/missButton"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/card14"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
@@ -414,5 +425,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/playerUsername3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="177dp"
+        android:layout_marginTop="154dp"
+        android:layout_marginEnd="177dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toTopOf="@+id/card19"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
