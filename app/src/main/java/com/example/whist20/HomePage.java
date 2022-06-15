@@ -106,8 +106,11 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                                             GameState game = snapshot.getValue(GameState.class);
-                                            assert game != null;
-                                            game.addPlayer(user.uid, user.username);
+                                            if (game == null) {
+                                                Toast.makeText(HomePage.this, "The game is unavailable, refresh for better options", Toast.LENGTH_LONG).show();
+                                                return;
+                                            }
+                                            game.addPlayer(new Player(user.uid, user.username));
                                             FirebaseDatabase.getInstance().getReference("WaitingSessions").child(user.current_game_id)
                                                     .setValue(game).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                 @Override
