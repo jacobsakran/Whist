@@ -10,7 +10,7 @@
     tools:layout_editor_absoluteY="0dp">
 
     <ImageView
-        android:id="@+id/imageView27"
+        android:id="@+id/card25"
         android:layout_width="74dp"
         android:layout_height="50dp"
         android:layout_marginStart="71dp"
@@ -21,7 +21,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <ImageView
-        android:id="@+id/imageView40"
+        android:id="@+id/card16"
         android:layout_width="74dp"
         android:layout_height="50dp"
         android:layout_marginTop="267dp"
@@ -32,7 +32,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <ImageView
-        android:id="@+id/imageView41"
+        android:id="@+id/card15"
         android:layout_width="74dp"
         android:layout_height="50dp"
         android:layout_marginTop="290dp"
@@ -43,7 +43,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <ImageView
-        android:id="@+id/imageView42"
+        android:id="@+id/card14"
         android:layout_width="74dp"
         android:layout_height="50dp"
         android:layout_marginTop="317dp"
@@ -54,7 +54,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <ImageView
-        android:id="@+id/imageView43"
+        android:id="@+id/card13"
         android:layout_width="74dp"
         android:layout_height="50dp"
         android:layout_marginTop="340dp"
@@ -65,7 +65,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <ImageView
-        android:id="@+id/imageView44"
+        android:id="@+id/card12"
         android:layout_width="74dp"
         android:layout_height="50dp"
         android:layout_marginTop="367dp"
@@ -76,7 +76,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <ImageView
-        android:id="@+id/imageView45"
+        android:id="@+id/card11"
         android:layout_width="74dp"
         android:layout_height="50dp"
         android:layout_marginTop="390dp"
@@ -87,7 +87,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <ImageView
-        android:id="@+id/imageView46"
+        android:id="@+id/card10"
         android:layout_width="74dp"
         android:layout_height="50dp"
         android:layout_marginTop="417dp"
@@ -98,7 +98,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <ImageView
-        android:id="@+id/imageView47"
+        android:id="@+id/card9"
         android:layout_width="74dp"
         android:layout_height="50dp"
         android:layout_marginTop="440dp"
@@ -109,7 +109,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <ImageView
-        android:id="@+id/imageView33"
+        android:id="@+id/card26"
         android:layout_width="74dp"
         android:layout_height="50dp"
         android:layout_marginStart="71dp"
@@ -120,7 +120,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <ImageView
-        android:id="@+id/imageView34"
+        android:id="@+id/card27"
         android:layout_width="74dp"
         android:layout_height="50dp"
         android:layout_marginStart="72dp"
@@ -133,7 +133,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <ImageView
-        android:id="@+id/imageView35"
+        android:id="@+id/card28"
         android:layout_width="74dp"
         android:layout_height="50dp"
         android:layout_marginStart="71dp"
@@ -144,7 +144,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <ImageView
-        android:id="@+id/imageView36"
+        android:id="@+id/card29"
         android:layout_width="74dp"
         android:layout_height="50dp"
         android:layout_marginStart="71dp"
@@ -155,7 +155,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <ImageView
-        android:id="@+id/imageView37"
+        android:id="@+id/card30"
         android:layout_width="74dp"
         android:layout_height="50dp"
         android:layout_marginStart="71dp"
@@ -166,7 +166,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <ImageView
-        android:id="@+id/imageView38"
+        android:id="@+id/card31"
         android:layout_width="74dp"
         android:layout_height="50dp"
         android:layout_marginStart="71dp"
@@ -177,7 +177,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <ImageView
-        android:id="@+id/imageView39"
+        android:id="@+id/card32"
         android:layout_width="74dp"
         android:layout_height="50dp"
         android:layout_marginStart="71dp"
@@ -188,7 +188,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <ImageView
-        android:id="@+id/imageView4"
+        android:id="@+id/card1"
         android:layout_width="50dp"
         android:layout_height="74dp"
         android:layout_marginTop="502dp"
@@ -198,7 +198,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <ImageView
-        android:id="@+id/imageView57"
+        android:id="@+id/card17"
         android:layout_width="50dp"
         android:layout_height="74dp"
         android:layout_marginStart="270dp"
@@ -209,7 +209,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <ImageView
-        android:id="@+id/imageView58"
+        android:id="@+id/card18"
         android:layout_width="50dp"
         android:layout_height="74dp"
         android:layout_marginStart="245dp"
@@ -220,7 +220,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <ImageView
-        android:id="@+id/imageView5"
+        android:id="@+id/card2"
         android:layout_width="50dp"
         android:layout_height="74dp"
         android:layout_marginTop="502dp"
@@ -230,7 +230,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <ImageView
-        android:id="@+id/imageView6"
+        android:id="@+id/card3"
         android:layout_width="50dp"
         android:layout_height="74dp"
         android:layout_marginTop="502dp"
@@ -240,7 +240,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <ImageView
-        android:id="@+id/imageView7"
+        android:id="@+id/card4"
         android:layout_width="50dp"
         android:layout_height="74dp"
         android:layout_marginStart="174dp"
@@ -250,7 +250,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <ImageView
-        android:id="@+id/imageView8"
+        android:id="@+id/card5"
         android:layout_width="50dp"
         android:layout_height="74dp"
         android:layout_marginStart="195dp"
@@ -260,33 +260,31 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <Button
-        android:id="@+id/hit"
+        android:id="@+id/hitButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="39dp"
+        android:layout_marginTop="81dp"
         android:layout_marginBottom="26dp"
         android:text="Hit"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toStartOf="@+id/missButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/card1" />
 
     <Button
-        android:id="@+id/miss"
+        android:id="@+id/missButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="149dp"
+        android:layout_marginTop="81dp"
         android:layout_marginEnd="47dp"
         android:layout_marginBottom="26dp"
         android:text="Miss"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <Button
-        android:id="@+id/inGameExit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="1dp"
-        android:text="Exit game"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/hitButton"
+        app:layout_constraintTop_toBottomOf="@+id/card7" />
 
     <TextView
         android:id="@+id/username"
@@ -294,7 +292,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
         android:text="username"
-        app:layout_constraintBottom_toTopOf="@+id/miss"
+        app:layout_constraintBottom_toTopOf="@+id/missButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent" />
@@ -322,7 +320,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/card6"
         android:layout_width="50dp"
         android:layout_height="74dp"
         android:layout_marginStart="220dp"
@@ -332,7 +330,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/card7"
         android:layout_width="50dp"
         android:layout_height="74dp"
         android:layout_marginStart="245dp"
@@ -342,7 +340,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <ImageView
-        android:id="@+id/imageView3"
+        android:id="@+id/card8"
         android:layout_width="50dp"
         android:layout_height="74dp"
         android:layout_marginStart="270dp"
@@ -352,7 +350,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <ImageView
-        android:id="@+id/imageView54"
+        android:id="@+id/card19"
         android:layout_width="50dp"
         android:layout_height="74dp"
         android:layout_marginStart="220dp"
@@ -363,7 +361,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <ImageView
-        android:id="@+id/imageView52"
+        android:id="@+id/card20"
         android:layout_width="50dp"
         android:layout_height="74dp"
         android:layout_marginStart="195dp"
@@ -374,7 +372,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <ImageView
-        android:id="@+id/imageView51"
+        android:id="@+id/card21"
         android:layout_width="50dp"
         android:layout_height="74dp"
         android:layout_marginStart="170dp"
@@ -385,7 +383,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <ImageView
-        android:id="@+id/imageView48"
+        android:id="@+id/card22"
         android:layout_width="50dp"
         android:layout_height="74dp"
         android:layout_marginStart="145dp"
@@ -396,7 +394,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <ImageView
-        android:id="@+id/imageView49"
+        android:id="@+id/card23"
         android:layout_width="50dp"
         android:layout_height="74dp"
         android:layout_marginStart="120dp"
@@ -407,7 +405,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <ImageView
-        android:id="@+id/imageView53"
+        android:id="@+id/card24"
         android:layout_width="50dp"
         android:layout_height="74dp"
         android:layout_marginStart="95dp"
