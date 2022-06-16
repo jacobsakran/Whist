@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Whist20">
         <activity
+            android:name=".Profile"
+            android:exported="false" />
+        <activity
             android:name=".WaitingSession"
             android:exported="false" />
         <activity

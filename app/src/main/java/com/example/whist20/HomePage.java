@@ -30,7 +30,7 @@ import java.util.Vector;
 public class HomePage extends AppCompatActivity implements View.OnClickListener {
     public static User user = null;
 
-    private Button log_out, create_game, refresh;
+    private Button log_out, create_game, refresh, back;
     private DatabaseReference reference;
     private ProgressBar progress_bar;
     private LinearLayout layout;
@@ -51,6 +51,8 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
         create_game = (Button) findViewById(R.id.createGameButton);
         create_game.setOnClickListener(this);
 
+        back = (Button) findViewById(R.id.back_home_page);
+        back.setOnClickListener(this);
         viewHomePage();
     }
 
@@ -64,6 +66,9 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                 break;
             case R.id.createGameButton:
                 startActivity(new Intent(HomePage.this, CreateGame.class));
+                break;
+            case R.id.back_home_page:
+                startActivity(new Intent(HomePage.this, Profile.class));
                 break;
             case R.id.homePageRefreshButton:
                 viewHomePage();
@@ -85,7 +90,7 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                     TextView text = new TextView(HomePage.this);
                     text.setTextSize(20);
                     text.setHint((String) game.game_name);
-                    String text_to_show = "Click to join " + (String) game.game_name + " game";
+                    String text_to_show = "Click to join " + (String) game.game_name + " game (" + game.game_money +")";
                     text.setText(text_to_show);
                     layout.addView(text);
 
@@ -187,7 +192,6 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
         reference = FirebaseDatabase.getInstance().getReference("Users");
         assert firebase_user != null;
         String id = firebase_user.getUid();
-        viewGameServers();
 
         reference.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -200,6 +204,7 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                     refresh.setVisibility(View.VISIBLE);
 
                     if (!user.current_game_id.equals("")) ForwardUserToCurrentGame();
+                    viewGameServers();
                     // the logged in user is loaded into the "user" parameter.
                 }
             }

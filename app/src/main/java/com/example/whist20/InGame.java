@@ -237,8 +237,8 @@ public class InGame extends AppCompatActivity {
                 } else {
                     hit.setClickable(false);
                     miss.setClickable(false);
-                    if (!current_player.uid.equals("")) turn.setText(current_player.userName + "'s Turn");
-                    else dealerPlay(); // the current player is the dealer
+                    turn.setText("");
+                    if (current_player.uid.equals("")) dealerPlay(); // the current player is the dealer
                 }
             }
 

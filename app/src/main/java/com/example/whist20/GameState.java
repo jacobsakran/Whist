@@ -17,11 +17,12 @@ public class GameState {
     public boolean is_active;
     public int maxPlayersNum;
     public Dict dict;
+    public int game_money;
 
     public GameState() {
     }
 
-    public GameState(String game_name) {
+    public GameState(String game_name, int game_money) {
         this.players = new MyList();
         this.currentPlayer = new Node();
         this.numOfPlayers = 0;
@@ -29,6 +30,7 @@ public class GameState {
         this.is_active = false;
         this.game_name = game_name;
         this.dict = new Dict();
+        this.game_money = game_money;
     }
 
     public void addPlayer(Player player) {
@@ -57,7 +59,7 @@ public class GameState {
 
     public static GameState convertSnapshotToGameState(@NonNull DataSnapshot snapshot) {
         if (!snapshot.exists()) return null;
-        GameState game = new GameState(snapshot.child("game_name").getValue(String.class));
+        GameState game = new GameState(snapshot.child("game_name").getValue(String.class), snapshot.child("game_money").getValue(int.class));
 
         // Converting players
         DataSnapshot players_iterator =  snapshot.child("players").child("head");
