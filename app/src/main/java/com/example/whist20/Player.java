@@ -16,8 +16,8 @@ public class Player extends Object{
         this.cards = new CardsSet();
     }
 
-    public void openNewCard(@NonNull Dict dict, GameState game) {
-        this.cards.addCard(dict.randomCard());
+    public void openNewCard(GameState game) {
+        this.cards.addCard(game.dict.randomCard());
     }
 
     public int playerScore() {

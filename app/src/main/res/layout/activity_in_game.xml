@@ -439,4 +439,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/playersTurn"
+        android:layout_width="120dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="18dp"
+        android:layout_marginTop="51dp"
+        android:layout_marginEnd="11dp"
+        android:layout_marginBottom="36dp"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/missButton"
+        app:layout_constraintStart_toEndOf="@+id/hitButton"
+        app:layout_constraintTop_toBottomOf="@+id/playerUsername1" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -37,6 +37,16 @@ public class MyList {
         this.size--;
     }
 
+    public Object findByValue(Object obj) {
+        Node iterator = this.head;
+        while (iterator.next != null) {
+            if (iterator.obj.equals(obj)) return obj;
+            iterator = iterator.next;
+        }
+
+        return null;
+    }
+
     public void removeByValue(Object obj) {
         if (this.head.obj.equals(obj)) {
             this.head = this.head.next;

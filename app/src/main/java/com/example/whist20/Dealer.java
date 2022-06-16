@@ -9,11 +9,13 @@ public class Dealer extends Player {
     }
 
     @Override
-    public void openNewCard(Dict dict, GameState game) {
+    public void openNewCard(GameState game) {
         Node iterator = game.players.head;
         while (iterator != null) {
+            Player player = ((Player) iterator.obj);
+            if (player == null) return;
             if (((Player) iterator.obj).cards.sum() > this.cards.sum()) {
-                this.cards.addCard(dict.randomCard());
+                this.cards.addCard(game.dict.randomCard());
                 return;
             }
             iterator = iterator.next;

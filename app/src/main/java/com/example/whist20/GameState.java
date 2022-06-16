@@ -42,7 +42,7 @@ public class GameState {
         Player to_remove = new Player();
         to_remove.uid = uid;
         this.players.removeByValue(to_remove);
-        this.numOfPlayers--;
+        this.numOfPlayers = this.numOfPlayers - 1;
     }
 
     public Player currentPlayerTurn() {
@@ -61,7 +61,15 @@ public class GameState {
 
         // Converting players
         DataSnapshot players_iterator =  snapshot.child("players").child("head");
+        boolean is_dealer = true;
+        Dealer dealer = null;
         while (players_iterator.exists()) {
+            if (is_dealer) {
+                dealer = players_iterator.child("obj").getValue(Dealer.class);
+                assert dealer != null;
+                dealer.cards = new CardsSet();
+            }
+
             Player player = players_iterator.child("obj").getValue(Player.class);
             assert player != null;
             player.cards = new CardsSet();
@@ -73,7 +81,13 @@ public class GameState {
                 cards_iterator = cards_iterator.child("next");
             }
 
-            game.players.addNode(player);
+            if (is_dealer) {
+                dealer.cards = player.cards;
+                game.addPlayer(dealer);
+            }
+            else game.addPlayer(player);
+
+            is_dealer = false;
             players_iterator = players_iterator.child("next");
         }
 

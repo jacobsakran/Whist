@@ -71,7 +71,7 @@ public class WaitingSession extends AppCompatActivity {
     protected void StartGame() {
         progressBar.setVisibility(View.VISIBLE);
 
-        if (!HomePage.user.uid.equals(((Player) game.players.head.obj).uid)) {
+        if (!HomePage.user.uid.equals(((Player) game.players.head.next.obj).uid)) {
             FirebaseDatabase.getInstance().getReference("ActiveGames").child(game.game_name)
                     .addValueEventListener(new ValueEventListener() {
                         @Override

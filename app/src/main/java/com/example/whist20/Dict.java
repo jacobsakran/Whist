@@ -7,32 +7,44 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.core.SnapshotHolder;
 
 import java.util.HashMap;
+import java.util.Random;
 import java.util.Vector;
 
 public class Dict {
-    public MyList freeCards;
     public MyList usedCards;
-    public MyList suitList;
 
     public Dict() {
         this.usedCards = new MyList();
-        this.freeCards = new MyList();
-        this.suitList = new MyList();
-        this.suitList.addNode(Suit.Hearts);
-        this.suitList.addNode(Suit.Diamonds);
-        this.suitList.addNode(Suit.Spades);
-        this.suitList.addNode(Suit.Clubs);
-
     }
 
     public Card randomCard() {
-        if (this.freeCards.size < 1) {
-            return null;
+        if (this.usedCards.size > 51) return null;
+
+        boolean[][] is_used = new boolean[4][13];
+
+        Node iterator = usedCards.head;
+        while (iterator != null) {
+            Card card = (Card) iterator.obj;
+            if (card == null) break;
+            is_used[Card.convertSuitToInt(card.suit)][card.value - 2] = true;
+            iterator = iterator.next;
         }
-        int index = ((int) Math.random()) % (this.freeCards.size);
-        Card tmp = (Card) this.freeCards.findByIndex(index);
+
+        Card[] unused_cards = new Card[52];
+        int counter = 0;
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 13; j++) {
+                if (!is_used[i][j]) {
+                    unused_cards[counter] = new Card(Card.convertInToSuit(i), j + 2);
+                    counter++;
+                }
+            }
+        }
+
+        Random rand = new Random();
+        int index = rand.nextInt(counter);
+        Card tmp = unused_cards[index];
         this.usedCards.addNode(tmp);
-        this.freeCards.removeByIndex(index);
         return tmp;
     }
 
@@ -41,13 +53,6 @@ public class Dict {
         Dict dict = new Dict();
 
         DataSnapshot iterator = snapshot.child("freeCards").child("head");
-        while (iterator.exists()) {
-            Card card = iterator.child("obj").getValue(Card.class);
-            dict.freeCards.addNode(card);
-            iterator = iterator.child("next");
-        }
-
-        iterator = snapshot.child("userCards").child("head");
         while (iterator.exists()) {
             Card card = iterator.child("obj").getValue(Card.class);
             dict.usedCards.addNode(card);
