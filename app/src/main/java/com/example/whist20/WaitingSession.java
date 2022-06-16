@@ -48,8 +48,8 @@ public class WaitingSession extends AppCompatActivity {
         exit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                game.removeUserByUid(HomePage.user.uid);
-                if (game.players_id.obj == null) game = null;
+                game.removePlayerByUid(HomePage.user.uid);
+                if (game.numOfPlayers == 1) game = null;
 
                 FirebaseDatabase.getInstance().getReference("WaitingSessions").child(HomePage.user.current_game_id).setValue(game)
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -71,7 +71,7 @@ public class WaitingSession extends AppCompatActivity {
     protected void StartGame() {
         progressBar.setVisibility(View.VISIBLE);
 
-        if (!HomePage.user.uid.equals((String) game.players_id.obj)) {
+        if (!HomePage.user.uid.equals(((Player) game.players.head.next.obj).uid)) {
             FirebaseDatabase.getInstance().getReference("ActiveGames").child(game.game_name)
                     .addValueEventListener(new ValueEventListener() {
                         @Override
@@ -100,6 +100,7 @@ public class WaitingSession extends AppCompatActivity {
                     return;
                 }
 
+                game.is_active = true;
                 FirebaseDatabase.getInstance().getReference("ActiveGames").child(game.game_name).setValue(game)
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
@@ -122,38 +123,40 @@ public class WaitingSession extends AppCompatActivity {
             @SuppressLint("SetTextI18n")
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                game = snapshot.getValue(GameState.class);
+                game = GameState.convertSnapshotToGameState(snapshot);
 
                 if (game == null) {
                     snapshot.getRef().removeEventListener(this);
+                    startActivity(new Intent(WaitingSession.this, HomePage.class));
                     return;
                 }
 
-                Node players = game.players_usernames;
+                Node players = game.players.head;
                 if (players != null) {
-                    player1.setText((String) players.obj);
+                    player1.setText(((Player) players.obj).userName);
                     players = players.next;
                 } else player1.setText("Waiting For Player 1...");
 
                 if (players != null) {
-                    player2.setText((String) players.obj);
+                    player2.setText(((Player) players.obj).userName);
                     players = players.next;
                 } else player2.setText("Waiting For Player 2...");
 
                 if (players != null) {
-                    player3.setText((String) players.obj);
+                    player3.setText(((Player) players.obj).userName);
                     players = players.next;
+                    snapshot.getRef().removeEventListener(this);
+                    StartGame();
+                    return;
                 } else player3.setText("Waiting For Player 3...");
 
                 if (players != null) {
-                    player4.setText((String) players.obj);
+                    player4.setText(((Player) players.obj).userName);
                     snapshot.getRef().removeEventListener(this);
                     StartGame();
                 }
                 else  player4.setText("Waiting For Player 4...");
-
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
