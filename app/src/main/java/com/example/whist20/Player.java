@@ -19,6 +19,7 @@ public class Player extends Object{
     public void openNewCard(GameState game) {
         this.cards.addCard(game.dict.randomCard());
     }
+    public void clearCardsSet() { this.cards = new CardsSet(); }
 
     public int playerScore() {
         return this.cards.sum();

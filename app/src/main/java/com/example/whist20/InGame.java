@@ -155,7 +155,6 @@ public class InGame extends AppCompatActivity {
     private void showPage() {
         String game_name = HomePage.user.current_game_id;
         FirebaseDatabase.getInstance().getReference("ActiveGames").child(game_name).addValueEventListener(new ValueEventListener() {
-            @SuppressLint("SetTextI18n")
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 game = GameState.convertSnapshotToGameState(snapshot);
