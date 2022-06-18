@@ -58,7 +58,6 @@ public class InGame extends AppCompatActivity {
     private Button miss;
 
     private GameState game = null;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -163,7 +162,6 @@ public class InGame extends AppCompatActivity {
                     startActivity(new Intent(InGame.this, HomePage.class));
                     return;
                 }
-
                 Node players = game.players.head;
                 Node iterator = players;
                 Player current_player = ((Player) game.currentPlayer.obj);

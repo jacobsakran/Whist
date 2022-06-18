@@ -29,7 +29,7 @@ public class User {
         this.uid = uid;
         this.current_game_id = "";
         this.rank = 0;
-        this.money = 2000;
+        this.money = 3000;
     }
 
 };

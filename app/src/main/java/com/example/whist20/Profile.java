@@ -22,7 +22,7 @@ public class Profile extends AppCompatActivity {
     public static User user = null;
     private Button play_button;
     private Button log_out_button;
-    private TextView profile_name_text, profile_rank_text, profile_budget_text ;
+    private TextView profile_rank_text, profile_budget_text ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +30,6 @@ public class Profile extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
         play_button = (Button) findViewById(R.id.Play);
         log_out_button = (Button) findViewById(R.id.log_out_profile);
-        profile_name_text = (TextView) findViewById(R.id.profile_name);
         profile_budget_text = (TextView) findViewById(R.id.profile_money);
         profile_rank_text = (TextView) findViewById(R.id.profile_rank);
 
@@ -54,7 +53,6 @@ public class Profile extends AppCompatActivity {
     private void viewProfilePage() {
         play_button.setVisibility(View.INVISIBLE);
         log_out_button.setVisibility(View.INVISIBLE);
-        profile_name_text.setVisibility(View.INVISIBLE);
         profile_budget_text.setVisibility(View.INVISIBLE);
         profile_rank_text.setVisibility(View.INVISIBLE);
 
@@ -67,14 +65,12 @@ public class Profile extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 user = snapshot.getValue(User.class);
                 if (user != null) {
-                    profile_name_text.setVisibility(View.VISIBLE);
                     profile_rank_text.setVisibility(View.VISIBLE);
                     profile_budget_text.setVisibility(View.VISIBLE);
                     log_out_button.setVisibility(View.VISIBLE);
                     play_button.setVisibility(View.VISIBLE);
-                    profile_name_text.setText(user.username);
-                    profile_rank_text.setText(user.rank);
-                    profile_budget_text.setText(user.money);
+                    profile_rank_text.setText("Rank: "+ String.valueOf(user.rank));
+                    profile_budget_text.setText("Budget: " + String.valueOf(user.money));
 
                     if (!user.current_game_id.equals("")) ForwardUserToCurrentGame();
                     // the logged in user is loaded into the "user" parameter.

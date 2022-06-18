@@ -50,6 +50,10 @@ public class CreateGame extends AppCompatActivity implements View.OnClickListene
     public void createGame() {
         String game_name = game_name_edit_text.getText().toString().trim();
         int game_money = Integer.parseInt(game_money_edit_text.getText().toString().trim());
+        if (game_money > HomePage.user.money) {
+            game_money_edit_text.setError("You can not afford this game.");
+            return;
+        }
         FirebaseDatabase.getInstance().getReference("WaitingSessions")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override

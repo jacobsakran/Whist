@@ -103,10 +103,16 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                                 ForwardUserToCurrentGame();
                                 return;
                             }
+                            if (game.game_money > HomePage.user.money) {
+                                String msg = "You can not afford this game.";
+                                Toast.makeText(HomePage.this, msg, Toast.LENGTH_LONG).show();
+                                return;
+                            }
 
-                            String game_name = ((TextView) view).getHint().toString().trim();
-                            user.current_game_id = game_name;
-                            FirebaseDatabase.getInstance().getReference("WaitingSessions").child(game_name)
+                            //String game_name = ((TextView) view).getHint().toString().trim();
+                            user.current_game_id = game.game_name;
+                            //user.money -= game.game_money;
+                            FirebaseDatabase.getInstance().getReference("WaitingSessions").child(game.game_name)
                                     .addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot snapshot) {

@@ -78,6 +78,9 @@ public class WaitingSession extends AppCompatActivity {
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             if (snapshot.exists()) {
                                 progressBar.setVisibility(View.INVISIBLE);
+                                Profile.user.money -= game.game_money;
+                                FirebaseDatabase.getInstance().getReference("Users").child(HomePage.user.uid)
+                                        .child("money").setValue(Profile.user.money);
                                 startActivity(new Intent(WaitingSession.this, InGame.class));
                                 snapshot.getRef().removeEventListener(this);
                             }
@@ -107,6 +110,9 @@ public class WaitingSession extends AppCompatActivity {
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
                                     progressBar.setVisibility(View.INVISIBLE);
+                                    Profile.user.money -= game.game_money;
+                                    FirebaseDatabase.getInstance().getReference("Users").child(HomePage.user.uid)
+                                            .child("money").setValue(Profile.user.money);
                                     startActivity(new Intent(WaitingSession.this, InGame.class));
                                 }
                                 else Toast.makeText(WaitingSession.this, "Failed to start game", Toast.LENGTH_LONG).show();
