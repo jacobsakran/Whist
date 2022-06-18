@@ -15,6 +15,8 @@ public class User {
     public Node friends;
     public String current_game_id;
     public String uid;
+    public int rank;
+    public int money;
 
     public User() {
 
@@ -26,6 +28,8 @@ public class User {
         this.friends = new Node();
         this.uid = uid;
         this.current_game_id = "";
+        this.rank = 0;
+        this.money = 2000;
     }
 
 };
