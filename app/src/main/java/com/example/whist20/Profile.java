@@ -70,6 +70,8 @@ public class Profile extends AppCompatActivity {
                     play_button.setVisibility(View.VISIBLE);
                     //refresh.setVisibility(View.VISIBLE);
 
+                    profile_name_text.setText(user.username);
+
                     if (!user.current_game_id.equals("")) ForwardUserToCurrentGame();
                     // the logged in user is loaded into the "user" parameter.
                 }
