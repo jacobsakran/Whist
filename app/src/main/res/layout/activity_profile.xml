@@ -7,9 +7,9 @@
     tools:context=".Profile">
 
     <TextView
-        android:id="@+id/textView"
-        android:layout_width="158dp"
-        android:layout_height="0dp"
+        android:id="@+id/profile_name"
+        android:layout_width="295dp"
+        android:layout_height="83dp"
         android:layout_marginTop="104dp"
         android:layout_marginBottom="386dp"
         android:text="TextView"
@@ -28,7 +28,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toBottomOf="@+id/profile_name" />
 
     <Button
         android:id="@+id/log_out_profile"
@@ -36,6 +36,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
         android:text="Log Out"
-        app:layout_constraintStart_toEndOf="@+id/textView"
+        app:layout_constraintStart_toEndOf="@+id/profile_name"
         app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

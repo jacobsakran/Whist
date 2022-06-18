@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -21,12 +22,15 @@ public class Profile extends AppCompatActivity {
     public static User user = null;
     private Button play_button;
     private Button log_out_button;
+    private TextView profile_name_text ;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
         play_button = (Button) findViewById(R.id.Play);
         log_out_button = (Button) findViewById(R.id.log_out_profile);
+        profile_name_text = (TextView) findViewById(R.id.profile_name);
 
         play_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,7 +53,7 @@ public class Profile extends AppCompatActivity {
         //progress_bar.setVisibility(View.VISIBLE);
         play_button.setVisibility(View.INVISIBLE);
         log_out_button.setVisibility(View.INVISIBLE);
-        //create_game.setVisibility(View.INVISIBLE);
+        profile_name_text.setVisibility(View.INVISIBLE);
 
         FirebaseUser firebase_user = FirebaseAuth.getInstance().getCurrentUser();
         assert firebase_user != null;
@@ -61,7 +65,7 @@ public class Profile extends AppCompatActivity {
                 user = snapshot.getValue(User.class);
                 if (user != null) {
                     //progress_bar.setVisibility(View.INVISIBLE);
-                    //create_game.setVisibility(View.VISIBLE);
+                    profile_name_text.setVisibility(View.VISIBLE);
                     log_out_button.setVisibility(View.VISIBLE);
                     play_button.setVisibility(View.VISIBLE);
                     //refresh.setVisibility(View.VISIBLE);
