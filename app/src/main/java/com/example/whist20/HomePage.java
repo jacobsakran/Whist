@@ -103,7 +103,7 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                                 ForwardUserToCurrentGame();
                                 return;
                             }
-                            if (game.game_money > HomePage.user.money) {
+                            if (game.game_money > Profile.user.money) {
                                 String msg = "You can not afford this game.";
                                 Toast.makeText(HomePage.this, msg, Toast.LENGTH_LONG).show();
                                 return;
@@ -202,7 +202,7 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
         reference.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                user = snapshot.getValue(User.class);
+                user = Profile.user;
                 if (user != null) {
                     progress_bar.setVisibility(View.INVISIBLE);
                     create_game.setVisibility(View.VISIBLE);

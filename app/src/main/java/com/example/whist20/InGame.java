@@ -111,7 +111,7 @@ public class InGame extends AppCompatActivity {
                 my_player.openNewCard(game);
                 game.nextPlayerTurn();
                 if (my_player.cards.sum() == -1) Toast.makeText(InGame.this, "You Lost", Toast.LENGTH_LONG).show();
-                FirebaseDatabase.getInstance().getReference("ActiveGames").child(HomePage.user.current_game_id)
+                FirebaseDatabase.getInstance().getReference("ActiveGames").child(Profile.user.current_game_id)
                         .setValue(game).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
@@ -131,7 +131,7 @@ public class InGame extends AppCompatActivity {
                 }
 
                 game.nextPlayerTurn();
-                FirebaseDatabase.getInstance().getReference("ActiveGames").child(HomePage.user.current_game_id)
+                FirebaseDatabase.getInstance().getReference("ActiveGames").child(Profile.user.current_game_id)
                         .setValue(game).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
@@ -144,15 +144,15 @@ public class InGame extends AppCompatActivity {
     }
 
     private void dealerPlay() {
-        if (!((Player) game.players.head.next.obj).uid.equals(HomePage.user.uid)) return;
+        if (!((Player) game.players.head.next.obj).uid.equals(Profile.user.uid)) return;
 
         ((Dealer) game.currentPlayer.obj).openNewCard(game);
         game.nextPlayerTurn();
-        FirebaseDatabase.getInstance().getReference("ActiveGames").child(HomePage.user.current_game_id).setValue(game);
+        FirebaseDatabase.getInstance().getReference("ActiveGames").child(Profile.user.current_game_id).setValue(game);
     }
 
     private void showPage() {
-        String game_name = HomePage.user.current_game_id;
+        String game_name = Profile.user.current_game_id;
         FirebaseDatabase.getInstance().getReference("ActiveGames").child(game_name).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -168,7 +168,7 @@ public class InGame extends AppCompatActivity {
 
                 while (iterator != null) {
                     String uid = ((Player) iterator.obj).uid;
-                    if (uid.equals(HomePage.user.uid)) break;
+                    if (uid.equals(Profile.user.uid)) break;
                     iterator = iterator.next;
                 }
 
@@ -228,7 +228,7 @@ public class InGame extends AppCompatActivity {
                     index++;
                 }
                 */
-                if (current_player.uid.equals(HomePage.user.uid)) {
+                if (current_player.uid.equals(Profile.user.uid)) {
                     hit.setClickable(true);
                     miss.setClickable(true);
                     turn.setText("Your Turn");

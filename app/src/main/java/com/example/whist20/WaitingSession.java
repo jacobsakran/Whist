@@ -48,15 +48,15 @@ public class WaitingSession extends AppCompatActivity {
         exit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                game.removePlayerByUid(HomePage.user.uid);
+                game.removePlayerByUid(Profile.user.uid);
                 if (game.numOfPlayers == 1) game = null;
 
-                FirebaseDatabase.getInstance().getReference("WaitingSessions").child(HomePage.user.current_game_id).setValue(game)
+                FirebaseDatabase.getInstance().getReference("WaitingSessions").child(Profile.user.current_game_id).setValue(game)
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
-                                    FirebaseDatabase.getInstance().getReference("Users").child(HomePage.user.uid)
+                                    FirebaseDatabase.getInstance().getReference("Users").child(Profile.user.uid)
                                             .child("current_game_id").setValue("");
                                     startActivity(new Intent(WaitingSession.this, HomePage.class));
                                 } else Toast.makeText(WaitingSession.this, "Something went wrong, try again", Toast.LENGTH_LONG).show();
@@ -71,7 +71,7 @@ public class WaitingSession extends AppCompatActivity {
     protected void StartGame() {
         progressBar.setVisibility(View.VISIBLE);
 
-        if (!HomePage.user.uid.equals(((Player) game.players.head.next.obj).uid)) {
+        if (!Profile.user.uid.equals(((Player) game.players.head.next.obj).uid)) {
             FirebaseDatabase.getInstance().getReference("ActiveGames").child(game.game_name)
                     .addValueEventListener(new ValueEventListener() {
                         @Override
@@ -79,7 +79,7 @@ public class WaitingSession extends AppCompatActivity {
                             if (snapshot.exists()) {
                                 progressBar.setVisibility(View.INVISIBLE);
                                 Profile.user.money -= game.game_money;
-                                FirebaseDatabase.getInstance().getReference("Users").child(HomePage.user.uid)
+                                FirebaseDatabase.getInstance().getReference("Users").child(Profile.user.uid)
                                         .child("money").setValue(Profile.user.money);
                                 startActivity(new Intent(WaitingSession.this, InGame.class));
                                 snapshot.getRef().removeEventListener(this);
@@ -111,7 +111,7 @@ public class WaitingSession extends AppCompatActivity {
                                 if (task.isSuccessful()) {
                                     progressBar.setVisibility(View.INVISIBLE);
                                     Profile.user.money -= game.game_money;
-                                    FirebaseDatabase.getInstance().getReference("Users").child(HomePage.user.uid)
+                                    FirebaseDatabase.getInstance().getReference("Users").child(Profile.user.uid)
                                             .child("money").setValue(Profile.user.money);
                                     startActivity(new Intent(WaitingSession.this, InGame.class));
                                 }
@@ -124,7 +124,7 @@ public class WaitingSession extends AppCompatActivity {
     }
 
     protected void ShowPage() {
-        String game_id = HomePage.user.current_game_id;
+        String game_id = Profile.user.current_game_id;
         FirebaseDatabase.getInstance().getReference("WaitingSessions").child(game_id).addValueEventListener(new ValueEventListener() {
             @SuppressLint("SetTextI18n")
             @Override
