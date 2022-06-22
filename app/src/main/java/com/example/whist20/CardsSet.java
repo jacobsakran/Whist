@@ -15,7 +15,8 @@ public class CardsSet {
     public void addCard(Card card) {
         this.cards.addNode(card);
         this.cardsSum += Math.min(card.value, 10);
-        if(card.value == 14) this.cardsSum++;
+        if (card.value == 14) this.cardsSum++;
+        if (cardsSum > 21 && card.value == 14) this.cardsSum = this.cardsSum - 10;
     }
 
     public int sum() {

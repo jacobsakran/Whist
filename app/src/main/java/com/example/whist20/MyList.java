@@ -39,8 +39,9 @@ public class MyList {
 
     public Object findByValue(Object obj) {
         Node iterator = this.head;
-        while (iterator.next != null) {
-            if (iterator.obj.equals(obj)) return obj;
+        while (iterator != null) {
+            if (iterator.obj == null) break;
+            if (iterator.obj.equals(obj)) return iterator.obj;
             iterator = iterator.next;
         }
 
