@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/bg"
     tools:context=".MainActivity">
 
     <EditText
@@ -11,18 +12,18 @@
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="38dp"
-        android:layout_marginTop="200dp"
+        android:layout_marginTop="50dp"
         android:layout_marginEnd="38dp"
-        android:layout_marginBottom="20dp"
         android:autofillHints=""
         android:ems="10"
         android:hint="Email Address"
         android:inputType="textEmailAddress"
         android:minHeight="48dp"
+        android:textColor="@color/white"
         android:textColorHint="#78909C"
         app:layout_constraintBottom_toTopOf="@+id/logInPassword"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.485"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -31,14 +32,17 @@
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="38dp"
+        android:layout_marginTop="2dp"
         android:layout_marginEnd="38dp"
         android:ems="10"
         android:hint="Password"
         android:inputType="textPassword"
         android:minHeight="48dp"
+        android:textColor="@color/white"
+        android:textColorHint="#78909C"
         app:layout_constraintBottom_toTopOf="@+id/forgotPassword"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.485"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/logInEmailAddress" />
 
@@ -52,16 +56,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/forgotPassword" />
+        app:layout_constraintTop_toBottomOf="@+id/forgotPassword"
+        app:layout_constraintVertical_bias="1.0" />
 
     <TextView
         android:id="@+id/forgotPassword"
-        android:layout_width="0dp"
+        android:layout_width="254dp"
         android:layout_height="19dp"
-        android:layout_marginStart="38dp"
-        android:layout_marginBottom="263dp"
+        android:layout_marginStart="55dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="160dp"
         android:text="Forgot Password?"
-        app:layout_constraintBottom_toTopOf="@+id/logInButton"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/mainActivityProgressBar"
         app:layout_constraintEnd_toStartOf="@+id/signUp"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -75,19 +82,20 @@
         android:layout_marginEnd="38dp"
         android:layout_marginBottom="449dp"
         android:text="Sign Up"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.454"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/logInPassword"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.177" />
 
     <ProgressBar
         android:id="@+id/mainActivityProgressBar"
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="328dp"
+        android:layout_marginTop="380dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"

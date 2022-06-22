@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -28,8 +29,6 @@ import java.util.HashMap;
 import java.util.Vector;
 
 public class HomePage extends AppCompatActivity implements View.OnClickListener {
-    public static User user = null;
-
     private Button log_out, create_game, refresh, back;
     private DatabaseReference reference;
     private ProgressBar progress_bar;
@@ -58,7 +57,7 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
 
     @Override
     public void onClick(View view) {
-        if (!user.current_game_id.equals("")) ForwardUserToCurrentGame();
+        if (!Profile.user.current_game_id.equals("")) ForwardUserToCurrentGame();
 
         switch (view.getId()) {
             case R.id.logOutButton:
@@ -92,12 +91,13 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                     text.setHint((String) game.game_name);
                     String text_to_show = "Click to join " + (String) game.game_name + " game (" + game.game_money +")";
                     text.setText(text_to_show);
+                    text.setTextColor(Color.WHITE);
                     layout.addView(text);
 
                     text.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            if (!user.current_game_id.equals("")) {
+                            if (!Profile.user.current_game_id.equals("")) {
                                 String msg = "You are already in this game, exit to join a new one";
                                 Toast.makeText(HomePage.this, msg, Toast.LENGTH_LONG).show();
                                 ForwardUserToCurrentGame();
@@ -110,7 +110,7 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                             }
 
                             //String game_name = ((TextView) view).getHint().toString().trim();
-                            user.current_game_id = game.game_name;
+                            Profile.user.current_game_id = game.game_name;
                             //user.money -= game.game_money;
                             FirebaseDatabase.getInstance().getReference("WaitingSessions").child(game.game_name)
                                     .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -121,14 +121,14 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                                                 Toast.makeText(HomePage.this, "The game is unavailable, refresh for better options", Toast.LENGTH_LONG).show();
                                                 return;
                                             }
-                                            game.addPlayer(new Player(user.uid, user.username));
-                                            FirebaseDatabase.getInstance().getReference("WaitingSessions").child(user.current_game_id)
+                                            game.addPlayer(new Player(Profile.user.uid, Profile.user.username));
+                                            FirebaseDatabase.getInstance().getReference("WaitingSessions").child(Profile.user.current_game_id)
                                                     .setValue(game).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                 @Override
                                                 public void onComplete(@NonNull Task<Void> task) {
                                                     if (task.isSuccessful()) {
                                                         FirebaseDatabase.getInstance().getReference("Users")
-                                                                .child(user.uid).child("current_game_id").setValue(user.current_game_id);
+                                                                .child(Profile.user.uid).child("current_game_id").setValue(Profile.user.current_game_id);
                                                         startActivity(new Intent(HomePage.this, WaitingSession.class));
                                                     }
                                                 }
@@ -157,20 +157,20 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
         FirebaseDatabase.getInstance().getReference("WaitingSessions").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.hasChild(user.current_game_id)) {
+                if (snapshot.hasChild(Profile.user.current_game_id)) {
                     startActivity(new Intent(HomePage.this, WaitingSession.class));
                     return;
                 }
                 FirebaseDatabase.getInstance().getReference("ActiveGames").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (snapshot.hasChild(user.current_game_id)) {
+                        if (snapshot.hasChild(Profile.user.current_game_id)) {
                             startActivity(new Intent(HomePage.this, InGame.class));
                             return;
                         }
 
-                        user.current_game_id = "";
-                        FirebaseDatabase.getInstance().getReference("Users").child(user.uid).child("current_game_id").setValue("");
+                        Profile.user.current_game_id = "";
+                        FirebaseDatabase.getInstance().getReference("Users").child(Profile.user.uid).child("current_game_id").setValue("");
                     }
 
                     @Override
@@ -202,14 +202,13 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
         reference.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                user = Profile.user;
-                if (user != null) {
+                if (Profile.user != null) {
                     progress_bar.setVisibility(View.INVISIBLE);
                     create_game.setVisibility(View.VISIBLE);
                     log_out.setVisibility(View.VISIBLE);
                     refresh.setVisibility(View.VISIBLE);
 
-                    if (!user.current_game_id.equals("")) ForwardUserToCurrentGame();
+                    if (!Profile.user.current_game_id.equals("")) ForwardUserToCurrentGame();
                     viewGameServers();
                     // the logged in user is loaded into the "user" parameter.
                 }

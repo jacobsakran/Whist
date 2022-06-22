@@ -4,33 +4,41 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg"
+    android:background="@drawable/pbg"
     tools:context=".Profile">
 
 
     <TextView
         android:id="@+id/profile_money"
-        android:layout_width="138dp"
-        android:layout_height="25dp"
-        android:layout_marginStart="264dp"
-        android:layout_marginTop="4dp"
+        android:layout_width="137dp"
+        android:layout_height="37dp"
+        android:layout_marginStart="137dp"
+        android:layout_marginEnd="137dp"
+        android:layout_marginBottom="384dp"
         android:text="TextView"
         android:textColor="@color/white"
         android:textSize="20dp"
         android:textStyle="italic"
+        app:layout_constraintBottom_toTopOf="@+id/Play"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/profile_rank" />
 
     <TextView
         android:id="@+id/profile_rank"
         android:layout_width="81dp"
         android:layout_height="28dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginStart="155dp"
+        android:layout_marginTop="63dp"
+        android:layout_marginEnd="175dp"
+        android:layout_marginBottom="43dp"
         android:text="TextView"
         android:textColor="@color/white"
         android:textSize="20dp"
         android:textStyle="italic"
+        app:layout_constraintBottom_toTopOf="@+id/profile_money"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -38,24 +46,29 @@
         android:id="@+id/Play"
         android:layout_width="305dp"
         android:layout_height="100dp"
-        android:layout_marginTop="540dp"
-        android:layout_marginBottom="91dp"
+        android:layout_marginStart="53dp"
+        android:layout_marginTop="466dp"
+        android:layout_marginEnd="53dp"
         android:text="Click To Play!"
         android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/log_out_profile"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/profile_rank"
+        app:layout_constraintVertical_bias="1.0" />
 
     <Button
         android:id="@+id/log_out_profile"
         android:layout_width="100dp"
         android:layout_height="50dp"
-        android:layout_marginTop="640dp"
-        android:layout_marginEnd="168dp"
+        android:layout_marginStart="155dp"
+        android:layout_marginEnd="156dp"
+        android:layout_marginBottom="71dp"
         android:text="Log Out"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Play" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -14,11 +14,9 @@ public class Dealer extends Player {
         while (iterator != null) {
             Player player = ((Player) iterator.obj);
             if (player == null) return;
-            if (((Player) iterator.obj).cards.sum() > this.cards.sum()) {
-                this.cards.addCard(game.dict.randomCard());
-                return;
-            }
+            if (Math.max(((Player) iterator.obj).cards.sum(), 17) > this.cards.sum()) this.cards.addCard(game.dict.randomCard());
             iterator = iterator.next;
         }
+        game.nextPlayerTurn();
     }
 }

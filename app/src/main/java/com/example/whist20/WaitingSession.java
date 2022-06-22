@@ -81,6 +81,7 @@ public class WaitingSession extends AppCompatActivity {
                                 Profile.user.money -= game.game_money;
                                 FirebaseDatabase.getInstance().getReference("Users").child(Profile.user.uid)
                                         .child("money").setValue(Profile.user.money);
+                                Toast.makeText(WaitingSession.this, String.valueOf(-game.game_money), Toast.LENGTH_LONG).show();
                                 startActivity(new Intent(WaitingSession.this, InGame.class));
                                 snapshot.getRef().removeEventListener(this);
                             }
@@ -103,7 +104,6 @@ public class WaitingSession extends AppCompatActivity {
                     return;
                 }
 
-                game.is_active = true;
                 FirebaseDatabase.getInstance().getReference("ActiveGames").child(game.game_name).setValue(game)
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
