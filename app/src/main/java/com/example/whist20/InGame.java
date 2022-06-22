@@ -54,8 +54,7 @@ public class InGame extends AppCompatActivity {
     private TextView userName4;
     private TextView turn;
 
-    private Button hit;
-    private Button miss;
+    private Button hit, miss, exit;
 
     private GameState game = null;
     @Override
@@ -65,6 +64,7 @@ public class InGame extends AppCompatActivity {
 
         this.hit = (Button) findViewById(R.id.hitButton);
         this.miss = (Button) findViewById(R.id.missButton);
+        this.exit = (Button) findViewById(R.id.in_game_exit);
         this.hit.setClickable(false);
         this.miss.setClickable(false);
 
@@ -99,6 +99,25 @@ public class InGame extends AppCompatActivity {
     }
 
     private void initOnClicks() {
+        this.exit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                game.removePlayerByUid(Profile.user.uid);
+                if (game.numOfPlayers == 1) game = null;
+
+                FirebaseDatabase.getInstance().getReference("WaitingSessions").child(Profile.user.current_game_id).setValue(game)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    FirebaseDatabase.getInstance().getReference("Users").child(Profile.user.uid)
+                                            .child("current_game_id").setValue("");
+                                    startActivity(new Intent(InGame.this, Profile.class));
+                                } else Toast.makeText(InGame.this, "Something went wrong, try again", Toast.LENGTH_LONG).show();
+                            }
+                        });
+            }
+        });
         this.hit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

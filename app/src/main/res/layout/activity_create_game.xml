@@ -39,7 +39,7 @@
         android:layout_marginTop="27dp"
         android:layout_marginEnd="55dp"
         android:ems="10"
-        android:hint="Game Money"
+        android:hint="Buy in"
         android:inputType="number"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
