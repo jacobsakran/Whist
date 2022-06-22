@@ -72,17 +72,20 @@ public class WaitingSession extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
 
         if (!Profile.user.uid.equals(((Player) game.players.head.next.obj).uid)) {
-            FirebaseDatabase.getInstance().getReference("ActiveGames").child(game.game_name)
-                    .addValueEventListener(new ValueEventListener() {
+            FirebaseDatabase.getInstance().getReference("ActiveGames").child(game.game_name).addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             if (snapshot.exists()) {
                                 progressBar.setVisibility(View.INVISIBLE);
                                 Profile.user.money -= game.game_money;
                                 FirebaseDatabase.getInstance().getReference("Users").child(Profile.user.uid)
-                                        .child("money").setValue(Profile.user.money);
-                                Toast.makeText(WaitingSession.this, String.valueOf(-game.game_money), Toast.LENGTH_LONG).show();
-                                startActivity(new Intent(WaitingSession.this, InGame.class));
+                                        .child("money").setValue(Profile.user.money).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                Toast.makeText(WaitingSession.this, String.valueOf(-game.game_money), Toast.LENGTH_LONG).show();
+                                                startActivity(new Intent(WaitingSession.this, InGame.class));
+                                            }
+                                        });
                                 snapshot.getRef().removeEventListener(this);
                             }
                         }
@@ -112,8 +115,13 @@ public class WaitingSession extends AppCompatActivity {
                                     progressBar.setVisibility(View.INVISIBLE);
                                     Profile.user.money -= game.game_money;
                                     FirebaseDatabase.getInstance().getReference("Users").child(Profile.user.uid)
-                                            .child("money").setValue(Profile.user.money);
-                                    startActivity(new Intent(WaitingSession.this, InGame.class));
+                                            .child("money").setValue(Profile.user.money).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    Toast.makeText(WaitingSession.this, String.valueOf(-game.game_money), Toast.LENGTH_LONG).show();
+                                                    startActivity(new Intent(WaitingSession.this, InGame.class));
+                                                }
+                                            });
                                 }
                                 else Toast.makeText(WaitingSession.this, "Failed to start game", Toast.LENGTH_LONG).show();
                             }

@@ -121,7 +121,7 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                                                 Toast.makeText(HomePage.this, "The game is unavailable, refresh for better options", Toast.LENGTH_LONG).show();
                                                 return;
                                             }
-                                            game.addPlayer(new Player(Profile.user.uid, Profile.user.username));
+                                            game.addPlayer(new Player(Profile.user.uid, Profile.user.username, Profile.user.money));
                                             FirebaseDatabase.getInstance().getReference("WaitingSessions").child(Profile.user.current_game_id)
                                                     .setValue(game).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                 @Override

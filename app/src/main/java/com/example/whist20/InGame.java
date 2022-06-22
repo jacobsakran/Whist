@@ -199,7 +199,9 @@ public class InGame extends AppCompatActivity {
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 game = GameState.convertSnapshotToGameState(snapshot);
                                 assert game != null;
-                                game.findPlayerByUid(Profile.user.uid).is_ready = true;
+                                Player tmp = game.findPlayerByUid(Profile.user.uid);
+                                tmp.is_ready = true;
+                                tmp.budget -= game.game_money;
                                 game.num_of_ready_players++;
                                 FirebaseDatabase.getInstance().getReference("Users").child(Profile.user.uid)
                                         .child("money").setValue(Profile.user.money - game.game_money);
@@ -341,98 +343,109 @@ public class InGame extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 game = GameState.convertSnapshotToGameState(snapshot);
-                if (game == null) {
-                    snapshot.getRef().removeEventListener(this);
-                    notFoundCase();
-                    return;
-                }
-                if (game.findPlayerByUid(Profile.user.uid) == null) {
-                    snapshot.getRef().removeEventListener(this);
-                    notFoundCase();
-                    return;
-                }
-                if (!isLegalToContinue()) return;
+                FirebaseDatabase.getInstance().getReference("Users").child(Profile.user.uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        Profile.user = snapshot.getValue(User.class);
+                        if (game == null) {
+                            snapshot.getRef().removeEventListener(this);
+                            notFoundCase();
+                            return;
+                        }
+                        if (game.findPlayerByUid(Profile.user.uid) == null) {
+                            snapshot.getRef().removeEventListener(this);
+                            notFoundCase();
+                            return;
+                        }
+                        if (!isLegalToContinue()) return;
 
-                Node players = game.players.head;
-                Node iterator = players;
-                Player current_player = ((Player) game.currentPlayer.obj);
+                        Node players = game.players.head;
+                        Node iterator = players;
+                        Player current_player = ((Player) game.currentPlayer.obj);
 
-                while (iterator != null) {
-                    String uid = ((Player) iterator.obj).uid;
-                    if (uid.equals(Profile.user.uid)) break;
-                    iterator = iterator.next;
-                }
+                        while (iterator != null) {
+                            String uid = ((Player) iterator.obj).uid;
+                            if (uid.equals(Profile.user.uid)) break;
+                            iterator = iterator.next;
+                        }
 
-                Node card_iterator = null;
-                int index = 0;
-
-
-                myUserName.setText(((Player) iterator.obj).userName);
-                card_iterator = ((Player) iterator.obj).cards.cards.head;
-                while (card_iterator != null) {
-                    Card card = (Card) card_iterator.obj;
-                    if (card == null) break;
-                    player1_cards[index].setImageResource(convertCardToImage(card));
-                    card_iterator = card_iterator.next;
-                    index++;
-                }
-                iterator = iterator.next;
-                if (iterator == null) iterator = players;
+                        Node card_iterator = null;
+                        int index = 0;
 
 
-                index = 0;
-                userName2.setText(((Player) iterator.obj).userName);
-                card_iterator = ((Player) iterator.obj).cards.cards.head;
-                while (card_iterator != null) {
-                    Card card = (Card) card_iterator.obj;
-                    if (card == null) break;
-                    player2_cards[index].setImageResource(convertCardToImage(card));
-                    card_iterator = card_iterator.next;
-                    index++;
-                }
-                iterator = iterator.next;
-                if (iterator == null) iterator = players;
+                        myUserName.setText(((Player) iterator.obj).userName);
+                        card_iterator = ((Player) iterator.obj).cards.cards.head;
+                        while (card_iterator != null) {
+                            Card card = (Card) card_iterator.obj;
+                            if (card == null) break;
+                            player1_cards[index].setImageResource(convertCardToImage(card));
+                            card_iterator = card_iterator.next;
+                            index++;
+                        }
+                        iterator = iterator.next;
+                        if (iterator == null) iterator = players;
 
 
-                if (!((Player)iterator.obj).uid.equals(Profile.user.uid)) {
-                    index = 0;
-                    userName3.setText(((Player) iterator.obj).userName);
-                    card_iterator = ((Player) iterator.obj).cards.cards.head;
-                    while (card_iterator != null) {
-                        Card card = (Card) card_iterator.obj;
-                        if (card == null) break;
-                        player3_cards[index].setImageResource(convertCardToImage(card));
-                        card_iterator = card_iterator.next;
-                        index++;
+                        index = 0;
+                        userName2.setText(((Player) iterator.obj).userName);
+                        card_iterator = ((Player) iterator.obj).cards.cards.head;
+                        while (card_iterator != null) {
+                            Card card = (Card) card_iterator.obj;
+                            if (card == null) break;
+                            player2_cards[index].setImageResource(convertCardToImage(card));
+                            card_iterator = card_iterator.next;
+                            index++;
+                        }
+                        iterator = iterator.next;
+                        if (iterator == null) iterator = players;
+
+
+                        if (!((Player)iterator.obj).uid.equals(Profile.user.uid)) {
+                            index = 0;
+                            userName3.setText(((Player) iterator.obj).userName);
+                            card_iterator = ((Player) iterator.obj).cards.cards.head;
+                            while (card_iterator != null) {
+                                Card card = (Card) card_iterator.obj;
+                                if (card == null) break;
+                                player3_cards[index].setImageResource(convertCardToImage(card));
+                                card_iterator = card_iterator.next;
+                                index++;
+                            }
+                            iterator = iterator.next;
+                            if (iterator == null) iterator = players;
+                        }
+
+
+                        if (!((Player)iterator.obj).uid.equals(Profile.user.uid)) {
+                            index = 0;
+                            userName4.setText(((Player) iterator.obj).userName);
+                            card_iterator = ((Player) iterator.obj).cards.cards.head;
+                            while (card_iterator != null) {
+                                Card card = (Card) card_iterator.obj;
+                                if (card == null) break;
+                                player4_cards[index].setImageResource(convertCardToImage(card));
+                                card_iterator = card_iterator.next;
+                                index++;
+                            }
+                        }
+
+                        if (current_player.uid.equals(Profile.user.uid)) {
+                            hit.setClickable(true);
+                            miss.setClickable(true);
+                            turn.setText("Your Turn");
+                        } else {
+                            hit.setClickable(false);
+                            miss.setClickable(false);
+                            turn.setText("");
+                            if (current_player.uid.equals("")) dealerPlay(); // the current player is the dealer
+                        }
                     }
-                    iterator = iterator.next;
-                    if (iterator == null) iterator = players;
-                }
 
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
 
-                if (!((Player)iterator.obj).uid.equals(Profile.user.uid)) {
-                    index = 0;
-                    userName4.setText(((Player) iterator.obj).userName);
-                    card_iterator = ((Player) iterator.obj).cards.cards.head;
-                    while (card_iterator != null) {
-                        Card card = (Card) card_iterator.obj;
-                        if (card == null) break;
-                        player4_cards[index].setImageResource(convertCardToImage(card));
-                        card_iterator = card_iterator.next;
-                        index++;
                     }
-                }
-
-                if (current_player.uid.equals(Profile.user.uid)) {
-                    hit.setClickable(true);
-                    miss.setClickable(true);
-                    turn.setText("Your Turn");
-                } else {
-                    hit.setClickable(false);
-                    miss.setClickable(false);
-                    turn.setText("");
-                    if (current_player.uid.equals("")) dealerPlay(); // the current player is the dealer
-                }
+                });
             }
 
             @Override

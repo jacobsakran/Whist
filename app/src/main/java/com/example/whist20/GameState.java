@@ -100,16 +100,15 @@ public class GameState {
     public void restartGame() {
         // TODO: update the players' money in the FireBase
         int dealer_sum = ((Dealer) this.players.head.obj).cards.sum();
-        Node iterator = this.players.head;
+        Node iterator = this.players.head.next;
         while (iterator != null) {
             if (iterator.obj == null) break;
             Player player = (Player) iterator.obj;
             if (player.cards.sum() >= dealer_sum) {
-                if (player.uid.equals(Profile.user.uid)) {
-                    FirebaseDatabase.getInstance().getReference("Users").child(player.uid).child("money").setValue(Profile.user.money + game_money * 2);
-                    Profile.user.money += game_money * 2;
-                }
+                FirebaseDatabase.getInstance().getReference("Users").child(player.uid).child("money").setValue(player.budget + game_money * 2);
+                player.budget += game_money * 2;
             }
+
             iterator = iterator.next;
             player.is_ready = false;
         }
@@ -136,7 +135,6 @@ public class GameState {
 
             Player player = players_iterator.child("obj").getValue(Player.class);
             assert player != null;
-            player.is_ready = players_iterator.child("obj").child("is_ready").getValue(boolean.class);
             player.cards = new CardsSet();
 
             DataSnapshot cards_iterator = players_iterator.child("obj").child("cards").child("cards").child("head");

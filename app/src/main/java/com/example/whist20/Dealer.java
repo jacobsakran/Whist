@@ -4,8 +4,8 @@ public class Dealer extends Player {
     public Dealer() {
     }
 
-    public Dealer(String Uid, String userName) {
-        super(Uid, userName);
+    public Dealer(String Uid, String userName, int initial_budget) {
+        super(Uid, userName, initial_budget);
     }
 
     @Override

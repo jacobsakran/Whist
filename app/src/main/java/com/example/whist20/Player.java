@@ -5,14 +5,16 @@ import androidx.annotation.NonNull;
 public class Player extends Object{
     public String uid;
     public String userName;
+    public int budget;
     public boolean is_ready;
     public CardsSet cards;
 
     public Player() {
     }
 
-    public Player(String Uid, String userName) {
+    public Player(String Uid, String userName, int initial_budget) {
         this.uid = Uid;
+        this.budget = initial_budget;
         this.is_ready = true;
         this.userName = userName;
         this.cards = new CardsSet();
