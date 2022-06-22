@@ -1,5 +1,6 @@
 package com.example.whist20;
 
+import android.os.CountDownTimer;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -10,6 +11,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -21,9 +24,9 @@ public class Profile extends AppCompatActivity {
 
     public static User user = null;
     private Button play_button;
-    private Button log_out_button;
+    private Button log_out_button, timer_button;
     private TextView profile_rank_text, profile_budget_text ;
-
+    int counter = 86400;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +35,35 @@ public class Profile extends AppCompatActivity {
         log_out_button = (Button) findViewById(R.id.log_out_profile);
         profile_budget_text = (TextView) findViewById(R.id.profile_money);
         profile_rank_text = (TextView) findViewById(R.id.profile_rank);
+        timer_button = (Button) findViewById(R.id.timer_button);
+
+        timer_button.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                long time = System.currentTimeMillis();
+                //Toast.makeText(Profile.this, String.valueOf(user.savedTime), Toast.LENGTH_LONG).show();
+                if (time >= (user.savedTime + 24 * 60 * 60 * 1000)){
+                    //Toast.makeText(Profile.this, String.valueOf(time - (user.savedTime + 24 * 60 * 60 * 1000)), Toast.LENGTH_LONG).show();
+                    user.savedTime = time;
+                    user.money += 1000;
+                    FirebaseDatabase.getInstance().getReference("Users").child(user.uid)
+                            .child("money").setValue(user.money);
+                    FirebaseDatabase.getInstance().getReference("Users").child(user.uid)
+                            .child("savedTime").setValue(user.savedTime).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            Toast.makeText(Profile.this, "you earned 1000 coins", Toast.LENGTH_LONG).show();
+                        }
+                    });
+
+                    profile_budget_text.setText("Budget: " + String.valueOf(user.money));
+                }
+                else {
+                    Toast.makeText(Profile.this, "24 hours not passed to get your daily money", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
 
         play_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,7 +96,9 @@ public class Profile extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 user = snapshot.getValue(User.class);
+
                 if (user != null) {
+                    //Toast.makeText(Profile.this, String.valueOf(user.savedTime), Toast.LENGTH_LONG).show();
                     profile_rank_text.setVisibility(View.VISIBLE);
                     profile_budget_text.setVisibility(View.VISIBLE);
                     log_out_button.setVisibility(View.VISIBLE);

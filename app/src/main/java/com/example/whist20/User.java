@@ -17,6 +17,7 @@ public class User {
     public String uid;
     public int rank;
     public int money;
+    public long savedTime;
 
     public User() {
 
@@ -30,6 +31,8 @@ public class User {
         this.current_game_id = "";
         this.rank = 0;
         this.money = 3000;
+        this.savedTime = 0;
+
     }
 
 };

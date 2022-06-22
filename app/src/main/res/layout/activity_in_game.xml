@@ -11,12 +11,14 @@
 
     <ImageView
         android:id="@+id/card25"
-        android:layout_width="74dp"
+        android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginStart="71dp"
+        android:layout_marginEnd="170dp"
         android:layout_marginBottom="414dp"
         android:rotation="90"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/addFriend2"
         app:layout_constraintStart_toStartOf="parent"
         tools:srcCompat="@tools:sample/avatars" />
 
@@ -512,6 +514,34 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/addFriend2"
+        android:layout_width="78dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="356dp"
+        android:layout_marginTop="340dp"
+        android:layout_marginBottom="361dp"
+        android:rotation="-90"
+        android:text="add friend"
+        android:textSize="7dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/addFriend1"
+        android:layout_width="78dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="340dp"
+        android:layout_marginEnd="357dp"
+        android:layout_marginBottom="361dp"
+        android:rotation="90"
+        android:text="add friend"
+        android:textSize="7dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
