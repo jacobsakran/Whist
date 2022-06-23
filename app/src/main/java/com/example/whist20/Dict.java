@@ -52,7 +52,7 @@ public class Dict {
         if (!snapshot.exists()) return null;
         Dict dict = new Dict();
 
-        DataSnapshot iterator = snapshot.child("freeCards").child("head");
+        DataSnapshot iterator = snapshot.child("usedCards").child("head");
         while (iterator.exists()) {
             Card card = iterator.child("obj").getValue(Card.class);
             dict.usedCards.addNode(card);

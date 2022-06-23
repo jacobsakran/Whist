@@ -1,6 +1,5 @@
 package com.example.whist20;
 
-import android.os.CountDownTimer;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -24,18 +23,23 @@ public class Profile extends AppCompatActivity {
 
     public static User user = null;
     private Button play_button;
-    private Button log_out_button, timer_button;
+    private Button log_out_button;
+    private Button timer_button;
     private TextView profile_rank_text, profile_budget_text ;
     int counter = 86400;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        try {
+            this.getSupportActionBar().hide();
+        } catch (NullPointerException e) {
+        }
         setContentView(R.layout.activity_profile);
         play_button = (Button) findViewById(R.id.Play);
         log_out_button = (Button) findViewById(R.id.log_out_profile);
         profile_budget_text = (TextView) findViewById(R.id.profile_money);
         profile_rank_text = (TextView) findViewById(R.id.profile_rank);
-        timer_button = (Button) findViewById(R.id.timer_button);
+        timer_button = (Button) findViewById(R.id.timerButton);
 
         timer_button.setOnClickListener(new View.OnClickListener()
         {
@@ -87,6 +91,7 @@ public class Profile extends AppCompatActivity {
         log_out_button.setVisibility(View.INVISIBLE);
         profile_budget_text.setVisibility(View.INVISIBLE);
         profile_rank_text.setVisibility(View.INVISIBLE);
+        timer_button.setVisibility(View.INVISIBLE);
 
         FirebaseUser firebase_user = FirebaseAuth.getInstance().getCurrentUser();
         assert firebase_user != null;
@@ -103,6 +108,7 @@ public class Profile extends AppCompatActivity {
                     profile_budget_text.setVisibility(View.VISIBLE);
                     log_out_button.setVisibility(View.VISIBLE);
                     play_button.setVisibility(View.VISIBLE);
+                    timer_button.setVisibility(View.VISIBLE);
                     profile_rank_text.setText("Rank: "+ String.valueOf(user.rank));
                     profile_budget_text.setText("Budget: " + String.valueOf(user.money));
 

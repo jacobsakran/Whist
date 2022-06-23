@@ -68,6 +68,10 @@ public class InGame extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        try {
+            this.getSupportActionBar().hide();
+        } catch (NullPointerException e) {
+        }
         setContentView(R.layout.activity_in_game);
 
         this.hit = (Button) findViewById(R.id.hitButton);
@@ -317,9 +321,6 @@ public class InGame extends AppCompatActivity {
                         playerCardBudget.setVisibility(View.INVISIBLE);
                     }
                 });
-
-
-
             }
         });
         this.hit.setOnClickListener(new View.OnClickListener() {
@@ -413,12 +414,7 @@ public class InGame extends AppCompatActivity {
                                 assert game != null;
                                 Player tmp = game.findPlayerByUid(Profile.user.uid);
                                 tmp.is_ready = true;
-                                tmp.budget -= game.game_money;
                                 game.num_of_ready_players++;
-                                FirebaseDatabase.getInstance().getReference("Users").child(Profile.user.uid)
-                                        .child("money").setValue(Profile.user.money - game.game_money);
-                                Profile.user.money -= game.game_money;
-                                Toast.makeText(InGame.this, String.valueOf(-game.game_money) , Toast.LENGTH_LONG).show();
                                 FirebaseDatabase.getInstance().getReference("ActiveGames").child(Profile.user.current_game_id).setValue(game);
                             }
 
@@ -441,14 +437,24 @@ public class InGame extends AppCompatActivity {
     }
 
     private void dealerPlay() {
+        // TODO: show the rest of the players the cards that the dealer has opened
         Dealer dealer = (Dealer) game.players.head.obj;
+        if (dealer.cards.cards.size < 2) {
+            try {
+                Thread.sleep(300);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            dealer.cards.addCard(game.dict.randomCard());
+            game.nextPlayerTurn();
+            FirebaseDatabase.getInstance().getReference("ActiveGames").child(Profile.user.current_game_id).setValue(game);
+            return;
+        }
+        dealer.openNewCard(game);
         Player player = game.findPlayerByUid(Profile.user.uid);
         if (dealer.cards.sum() > player.cards.sum()) Toast.makeText(InGame.this, "You Lost the Bet", Toast.LENGTH_LONG).show();
         else Toast.makeText(InGame.this, "You won the bet +" + String.valueOf(game.game_money * 2), Toast.LENGTH_LONG).show();
         if (!((Player) game.players.head.next.obj).uid.equals(Profile.user.uid)) return;
-
-        // TODO: show the rest of the players the cards that the dealer has opened
-        ((Dealer) game.currentPlayer.obj).openNewCard(game);
         game.restartGame();
         FirebaseDatabase.getInstance().getReference("ActiveGames").child(Profile.user.current_game_id).setValue(game);
     }
@@ -504,7 +510,7 @@ public class InGame extends AppCompatActivity {
             assert card != null;
             players_cards[index][1].setImageResource(convertCardToImage(card));
             try {
-                Thread.sleep(300);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -536,7 +542,7 @@ public class InGame extends AppCompatActivity {
             return false;
         }
 
-        if (!game.is_active) {
+        /*if (!game.is_active) {
             gameIsNotActiveCase();
             return false;
         }
@@ -544,7 +550,7 @@ public class InGame extends AppCompatActivity {
         if (game.first_open) {
             isFirstOpenCase();
             return false;
-        }
+        }*/
         return true;
     }
 
@@ -634,7 +640,6 @@ public class InGame extends AppCompatActivity {
                         }
 
 
-
                         if (!((Player)iterator.obj).uid.equals(Profile.user.uid)) {
                             index = 0;
                             userName4.setText(((Player) iterator.obj).userName);
@@ -655,7 +660,36 @@ public class InGame extends AppCompatActivity {
                         if (current_player.uid.equals(Profile.user.uid)) {
                             hit.setClickable(true);
                             miss.setClickable(true);
-                            turn.setText("Your Turn");
+                            if (current_player.cards.cards.size == 0) {
+                                current_player.budget -= game.game_money;
+                                Profile.user.money -= game.game_money;
+                                FirebaseDatabase.getInstance().getReference("Users").child(Profile.user.uid)
+                                        .child("money").setValue(Profile.user.money).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                Toast.makeText(InGame.this, String.valueOf(-game.game_money), Toast.LENGTH_LONG).show();
+                                            }
+                                        });
+                            }
+                            if (current_player.cards.cards.size < 2) {
+                                try {
+                                    Thread.sleep(1000);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                Player my_player = (Player) game.currentPlayer.obj;
+                                my_player.openNewCard(game);
+                                game.nextPlayerTurn();
+                                FirebaseDatabase.getInstance().getReference("ActiveGames").child(Profile.user.current_game_id)
+                                        .setValue(game).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (!task.isSuccessful())
+                                                    Toast.makeText(InGame.this, "Failed to update game on FireBase", Toast.LENGTH_LONG).show();
+                                            }
+                                        });
+                            }
+                            else turn.setText("Your Turn");
                         } else {
                             hit.setClickable(false);
                             miss.setClickable(false);

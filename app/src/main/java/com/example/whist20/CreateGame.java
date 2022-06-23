@@ -29,6 +29,10 @@ public class CreateGame extends AppCompatActivity implements View.OnClickListene
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        try {
+            this.getSupportActionBar().hide();
+        } catch (NullPointerException e) {
+        }
         setContentView(R.layout.activity_create_game);
         game_name_edit_text = (EditText) findViewById(R.id.createGameName);
         game_money_edit_text = (EditText) findViewById(R.id.createGameMoney);

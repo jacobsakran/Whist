@@ -37,6 +37,10 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        try {
+            this.getSupportActionBar().hide();
+        } catch (NullPointerException e) {
+        }
         setContentView(R.layout.activity_home_page);
         progress_bar = (ProgressBar) findViewById(R.id.homePageProgressBar);
         layout = (LinearLayout) findViewById(R.id.homePageLinearLayout);

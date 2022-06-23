@@ -104,7 +104,7 @@ public class GameState {
         while (iterator != null) {
             if (iterator.obj == null) break;
             Player player = (Player) iterator.obj;
-            if (player.cards.sum() >= dealer_sum) {
+            if (player.cards.sum() >= dealer_sum && player.cards.sum() > -1) {
                 FirebaseDatabase.getInstance().getReference("Users").child(player.uid).child("money").setValue(player.budget + game_money * 2);
                 player.budget += game_money * 2;
             }
@@ -116,6 +116,7 @@ public class GameState {
         this.is_active = false;
         this.first_open = true;
         this.clearCards();
+        this.dict = new Dict();
     }
 
     public static GameState convertSnapshotToGameState(@NonNull DataSnapshot snapshot) {
