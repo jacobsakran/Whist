@@ -11,14 +11,12 @@
 
     <ImageView
         android:id="@+id/card25"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
+        android:layout_width="74dp"
+        android:layout_height="49dp"
         android:layout_marginStart="71dp"
-        android:layout_marginEnd="170dp"
-        android:layout_marginBottom="414dp"
+        android:layout_marginBottom="420dp"
         android:rotation="90"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/addFriend2"
         app:layout_constraintStart_toStartOf="parent"
         tools:srcCompat="@tools:sample/avatars" />
 
@@ -26,8 +24,8 @@
         android:id="@+id/card16"
         android:layout_width="74dp"
         android:layout_height="50dp"
-        android:layout_marginTop="267dp"
-        android:layout_marginEnd="67dp"
+        android:layout_marginTop="260dp"
+        android:layout_marginEnd="68dp"
         android:rotation="-90"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -114,8 +112,8 @@
         android:id="@+id/card26"
         android:layout_width="74dp"
         android:layout_height="50dp"
-        android:layout_marginStart="71dp"
-        android:layout_marginTop="290dp"
+        android:layout_marginStart="72dp"
+        android:layout_marginTop="288dp"
         android:rotation="90"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -327,6 +325,7 @@
         android:layout_marginTop="348dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="290dp"
+        android:clickable="false"
         android:rotation="-90"
         android:text="player2"
         android:textColor="#FDFCFC"
@@ -499,8 +498,10 @@
         android:text="Exit Game"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/continueButtonInGame"
@@ -516,32 +517,60 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/addFriend2"
-        android:layout_width="78dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="356dp"
-        android:layout_marginTop="340dp"
-        android:layout_marginBottom="361dp"
-        android:rotation="-90"
-        android:text="add friend"
-        android:textSize="7dp"
+    <TextView
+        android:id="@+id/playerCard"
+        android:layout_width="228dp"
+        android:layout_height="304dp"
+        android:layout_marginStart="110dp"
+        android:layout_marginTop="198dp"
+        android:layout_marginEnd="110dp"
+        android:layout_marginBottom="144dp"
+        android:background="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.486"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.576" />
+
+    <TextView
+        android:id="@+id/player_card_username"
+        android:layout_width="82dp"
+        android:layout_height="18dp"
+        android:layout_marginStart="104dp"
+        android:layout_marginTop="260dp"
+        android:text="TextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/player_card_budget"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="104dp"
+        android:layout_marginTop="300dp"
+        android:text="TextView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/addFriend1"
-        android:layout_width="78dp"
-        android:layout_height="30dp"
-        android:layout_marginTop="340dp"
-        android:layout_marginEnd="357dp"
-        android:layout_marginBottom="361dp"
-        android:rotation="90"
+        android:id="@+id/player_card_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="392dp"
         android:text="add friend"
-        android:textSize="7dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/player_card_exit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="476dp"
+        android:text="exit"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

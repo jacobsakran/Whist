@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -19,8 +18,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import java.util.concurrent.TimeUnit;
 
 public class InGame extends AppCompatActivity {
     private final int[] cards_of_hearts = {R.drawable.two_of_hearts, R.drawable.three_of_hearts, R.drawable.four_of_hearts,
@@ -57,11 +54,15 @@ public class InGame extends AppCompatActivity {
     private TextView budget;
     private TextView bettingValue;
     private TextView turn;
-
+    private TextView playerCardBudget;
+    private TextView playerCardView;
+    private TextView playerCardUsername;
     private Button hit;
     private Button miss;
     private Button exit;
     private Button continue_game;
+    private Button addFriend;
+    private Button playerCardExit;
 
     private GameState game = null;
     @Override
@@ -73,6 +74,21 @@ public class InGame extends AppCompatActivity {
         this.miss = (Button) findViewById(R.id.missButton);
         this.exit = (Button) findViewById(R.id.exitButtonInGame);
         this.continue_game = (Button) findViewById(R.id.continueButtonInGame);
+
+        this.addFriend = (Button) findViewById(R.id.player_card_add);
+        this.playerCardExit = (Button) findViewById(R.id.player_card_exit);
+        this.playerCardBudget = (TextView) findViewById(R.id.player_card_budget);
+        this.playerCardView = (TextView) findViewById(R.id.playerCard);
+        this.playerCardUsername = (TextView) findViewById(R.id.player_card_username);
+
+        this.addFriend.setVisibility(View.INVISIBLE);
+        this.addFriend.setClickable(false);
+        this.playerCardUsername.setVisibility(View.INVISIBLE);
+        this.playerCardView.setVisibility(View.INVISIBLE);
+        this.playerCardExit.setVisibility(View.INVISIBLE);
+        this.playerCardExit.setClickable(false);
+        this.playerCardBudget.setVisibility(View.INVISIBLE);
+
         this.hit.setClickable(false);
         this.miss.setClickable(false);
         this.exit.setVisibility(View.INVISIBLE);
@@ -82,6 +98,12 @@ public class InGame extends AppCompatActivity {
         this.userName2 = (TextView) findViewById(R.id.playerUsername2);
         this.userName3 = (TextView) findViewById(R.id.playerUsername3);
         this.userName4 = (TextView) findViewById(R.id.playerUsername4);
+
+        this.myUserName.setClickable(false);
+        this.userName2.setClickable(true);
+        this.userName3.setClickable(true);
+        this.userName4.setClickable(true);
+
         this.budget = (TextView) findViewById(R.id.budgetInGame);
         this.bettingValue = (TextView) findViewById(R.id.bettingValueInGame);
         this.turn = (TextView) findViewById(R.id.playersTurn);
@@ -110,6 +132,196 @@ public class InGame extends AppCompatActivity {
     }
 
     private void initOnClicks() {
+        this.userName2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (game == null) {
+                    Toast.makeText(InGame.this, "Something went wrong, try again", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                playerCardView.setVisibility(View.VISIBLE);
+                addFriend.setVisibility(View.VISIBLE);
+                playerCardUsername.setVisibility(View.VISIBLE);
+                playerCardExit.setVisibility(View.VISIBLE);
+                playerCardBudget.setVisibility(View.VISIBLE);
+
+                playerCardExit.setClickable(true);
+                addFriend.setClickable(true);
+
+                Node players = game.players.head;
+                Player player2 = (Player) players.findByIndex(2);
+                playerCardUsername.setText(player2.userName);
+                playerCardBudget.setText("Budget: " + player2.budget);
+
+                addFriend.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        FirebaseDatabase.getInstance().getReference("Users").child(player2.uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                User user2 = snapshot.getValue(User.class);
+                                user2.requested.addValue(Profile.user.uid);
+                                FirebaseDatabase.getInstance().getReference("Users").child(player2.uid)
+                                        .child("requested").setValue(user2.requested);
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+                        addFriend.setClickable(false);
+                        addFriend.setText("Friend Request sent");
+                        //Todo send a friend request
+
+                    }
+                });
+                playerCardExit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        addFriend.setVisibility(View.INVISIBLE);
+                        addFriend.setClickable(false);
+                        playerCardUsername.setVisibility(View.INVISIBLE);
+                        playerCardView.setVisibility(View.INVISIBLE);
+                        playerCardExit.setVisibility(View.INVISIBLE);
+                        playerCardExit.setClickable(false);
+                        playerCardBudget.setVisibility(View.INVISIBLE);
+                    }
+                });
+
+
+
+            }
+        });
+
+        this.userName3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (game == null) {
+                    Toast.makeText(InGame.this, "Something went wrong, try again", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                playerCardView.setVisibility(View.VISIBLE);
+                addFriend.setVisibility(View.VISIBLE);
+                playerCardUsername.setVisibility(View.VISIBLE);
+                playerCardExit.setVisibility(View.VISIBLE);
+                playerCardBudget.setVisibility(View.VISIBLE);
+
+                playerCardExit.setClickable(true);
+                addFriend.setClickable(true);
+
+                Node players = game.players.head;
+                Player player3 = (Player) players.findByIndex(3);
+                playerCardUsername.setText(player3.userName);
+                playerCardBudget.setText("Budget: " + player3.budget);
+
+                addFriend.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        FirebaseDatabase.getInstance().getReference("Users").child(player3.uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                User user2 = snapshot.getValue(User.class);
+                                if (user2 == null) {
+                                    Toast.makeText(InGame.this, "something went wrong", Toast.LENGTH_LONG).show();
+                                }
+                                user2.requested.addValue(Profile.user.uid);
+                                FirebaseDatabase.getInstance().getReference("Users").child(player3.uid)
+                                        .child("requested").setValue(user2.requested);
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+                        addFriend.setClickable(false);
+                        addFriend.setText("Friend Request sent");
+                        //Todo send a friend request
+
+                    }
+                });
+                playerCardExit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        addFriend.setVisibility(View.INVISIBLE);
+                        addFriend.setClickable(false);
+                        playerCardUsername.setVisibility(View.INVISIBLE);
+                        playerCardView.setVisibility(View.INVISIBLE);
+                        playerCardExit.setVisibility(View.INVISIBLE);
+                        playerCardExit.setClickable(false);
+                        playerCardBudget.setVisibility(View.INVISIBLE);
+                    }
+                });
+
+
+
+            }
+        });
+        this.userName4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (game == null) {
+                    Toast.makeText(InGame.this, "Something went wrong, try again", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                playerCardView.setVisibility(View.VISIBLE);
+                addFriend.setVisibility(View.VISIBLE);
+                playerCardUsername.setVisibility(View.VISIBLE);
+                playerCardExit.setVisibility(View.VISIBLE);
+                playerCardBudget.setVisibility(View.VISIBLE);
+
+                playerCardExit.setClickable(true);
+                addFriend.setClickable(true);
+
+                Node players = game.players.head;
+                Player player4 = (Player) players.findByIndex(4);
+                playerCardUsername.setText(player4.userName);
+                playerCardBudget.setText("Budget: " + player4.budget);
+
+                addFriend.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        FirebaseDatabase.getInstance().getReference("Users").child(player4.uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                User user2 = snapshot.getValue(User.class);
+                                user2.requested.addValue(Profile.user.uid);
+                                FirebaseDatabase.getInstance().getReference("Users").child(player4.uid)
+                                        .child("requested").setValue(user2.requested);
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+                        addFriend.setClickable(false);
+                        addFriend.setText("Friend Request sent");
+                        //Todo send a friend request
+
+                    }
+                });
+                playerCardExit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        addFriend.setVisibility(View.INVISIBLE);
+                        addFriend.setClickable(false);
+                        playerCardUsername.setVisibility(View.INVISIBLE);
+                        playerCardView.setVisibility(View.INVISIBLE);
+                        playerCardExit.setVisibility(View.INVISIBLE);
+                        playerCardExit.setClickable(false);
+                        playerCardBudget.setVisibility(View.INVISIBLE);
+                    }
+                });
+
+
+
+            }
+        });
         this.hit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -388,6 +600,9 @@ public class InGame extends AppCompatActivity {
 
                         index = 0;
                         userName2.setText(((Player) iterator.obj).userName);
+                        if (((Player) iterator.obj).uid.equals("")) {
+                            userName2.setClickable(false);
+                        }
                         card_iterator = ((Player) iterator.obj).cards.cards.head;
                         while (card_iterator != null) {
                             Card card = (Card) card_iterator.obj;
@@ -414,6 +629,10 @@ public class InGame extends AppCompatActivity {
                             iterator = iterator.next;
                             if (iterator == null) iterator = players;
                         }
+                        else{
+                            userName3.setClickable(false);
+                        }
+
 
 
                         if (!((Player)iterator.obj).uid.equals(Profile.user.uid)) {
@@ -428,6 +647,10 @@ public class InGame extends AppCompatActivity {
                                 index++;
                             }
                         }
+                        else{
+                            userName4.setClickable(false);
+                        }
+
 
                         if (current_player.uid.equals(Profile.user.uid)) {
                             hit.setClickable(true);
