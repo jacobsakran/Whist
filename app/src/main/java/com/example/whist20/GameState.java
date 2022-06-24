@@ -112,6 +112,7 @@ public class GameState {
             iterator = iterator.next;
             player.is_ready = false;
         }
+        this.currentPlayer = this.players.head.next;
         this.num_of_ready_players = 1;
         this.is_active = false;
         this.first_open = true;

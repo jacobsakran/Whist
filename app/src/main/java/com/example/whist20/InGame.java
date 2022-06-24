@@ -153,7 +153,7 @@ public class InGame extends AppCompatActivity {
                 addFriend.setClickable(true);
 
                 Node players = game.players.head;
-                Player player2 = (Player) players.findByIndex(2);
+                Player player2 = (Player) players.findByIndex(3);
                 playerCardUsername.setText(player2.userName);
                 playerCardBudget.setText("Budget: " + player2.budget);
 
@@ -164,6 +164,7 @@ public class InGame extends AppCompatActivity {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 User user2 = snapshot.getValue(User.class);
+                                if (user2.requested == null) user2.requested = new Node();
                                 user2.requested.addValue(Profile.user.uid);
                                 FirebaseDatabase.getInstance().getReference("Users").child(player2.uid)
                                         .child("requested").setValue(user2.requested);
@@ -447,15 +448,27 @@ public class InGame extends AppCompatActivity {
             }
             dealer.cards.addCard(game.dict.randomCard());
             game.nextPlayerTurn();
+            game.is_active = true;
             FirebaseDatabase.getInstance().getReference("ActiveGames").child(Profile.user.current_game_id).setValue(game);
             return;
         }
-        dealer.openNewCard(game);
-        Player player = game.findPlayerByUid(Profile.user.uid);
-        if (dealer.cards.sum() > player.cards.sum()) Toast.makeText(InGame.this, "You Lost the Bet", Toast.LENGTH_LONG).show();
-        else Toast.makeText(InGame.this, "You won the bet +" + String.valueOf(game.game_money * 2), Toast.LENGTH_LONG).show();
-        if (!((Player) game.players.head.next.obj).uid.equals(Profile.user.uid)) return;
-        game.restartGame();
+
+        if (!game.is_active) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            game.restartGame();
+        }
+        else {
+            dealer.openNewCard(game);
+            Player player = game.findPlayerByUid(Profile.user.uid);
+            if (dealer.cards.sum() > player.cards.sum() || player.cards.sum() == -1) Toast.makeText(InGame.this, "You Lost the Bet", Toast.LENGTH_LONG).show();
+            else Toast.makeText(InGame.this, "You won the bet +" + String.valueOf(game.game_money * 2), Toast.LENGTH_LONG).show();
+            if (!((Player) game.players.head.next.obj).uid.equals(Profile.user.uid)) return;
+            game.is_active = false;
+        }
         FirebaseDatabase.getInstance().getReference("ActiveGames").child(Profile.user.current_game_id).setValue(game);
     }
 
@@ -529,7 +542,7 @@ public class InGame extends AppCompatActivity {
         Player player = game.findPlayerByUid(Profile.user.uid);
         if (!player.is_ready) {
             try {
-                Thread.sleep(5000);
+                Thread.sleep(3000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -561,20 +574,20 @@ public class InGame extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 game = GameState.convertSnapshotToGameState(snapshot);
+                if (game == null) {
+                    snapshot.getRef().removeEventListener(this);
+                    notFoundCase();
+                    return;
+                }
+                if (game.findPlayerByUid(Profile.user.uid) == null) {
+                    snapshot.getRef().removeEventListener(this);
+                    notFoundCase();
+                    return;
+                }
                 FirebaseDatabase.getInstance().getReference("Users").child(Profile.user.uid).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         Profile.user = snapshot.getValue(User.class);
-                        if (game == null) {
-                            snapshot.getRef().removeEventListener(this);
-                            notFoundCase();
-                            return;
-                        }
-                        if (game.findPlayerByUid(Profile.user.uid) == null) {
-                            snapshot.getRef().removeEventListener(this);
-                            notFoundCase();
-                            return;
-                        }
                         if (!isLegalToContinue()) return;
 
                         Node players = game.players.head;
