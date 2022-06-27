@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -29,9 +30,10 @@ public class Profile extends AppCompatActivity {
     public static User user = null;
     private Button play_button;
     private Button log_out_button;
-    private Button timer_button, requestsProfileButton;
+    private Button timer_button, requestsProfileButton, back;
     private TextView profile_rank_text, profile_budget_text ;
     private ScrollView requestLayout;
+    private ImageView star, coin;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,7 +42,10 @@ public class Profile extends AppCompatActivity {
         } catch (NullPointerException e) {
         }
         setContentView(R.layout.activity_profile);
+        star = (ImageView) findViewById(R.id.star);
+        coin = (ImageView) findViewById(R.id.coin);
         play_button = (Button) findViewById(R.id.Play);
+        back = (Button) findViewById(R.id.back_profile);
         log_out_button = (Button) findViewById(R.id.log_out_profile);
         profile_budget_text = (TextView) findViewById(R.id.profile_money);
         profile_rank_text = (TextView) findViewById(R.id.profile_rank);
@@ -48,12 +53,19 @@ public class Profile extends AppCompatActivity {
         requestsProfileButton = (Button) findViewById(R.id.requestsProfile);
         requestLayout = (ScrollView) findViewById(R.id.requestLayoutProfile);
         requestLayout.setVisibility(View.INVISIBLE);
+
         requestsProfileButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v) {
-                requestLayout.setVisibility(View.VISIBLE);
                 viewFriendsRequests();
+            }
+        });
+        back.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                viewProfilePage();
             }
         });
         timer_button.setOnClickListener(new View.OnClickListener()
@@ -102,11 +114,16 @@ public class Profile extends AppCompatActivity {
     }
 
     private void viewProfilePage() {
+        star.setVisibility(View.INVISIBLE);
+        coin.setVisibility(View.INVISIBLE);
         play_button.setVisibility(View.INVISIBLE);
         log_out_button.setVisibility(View.INVISIBLE);
         profile_budget_text.setVisibility(View.INVISIBLE);
         profile_rank_text.setVisibility(View.INVISIBLE);
         timer_button.setVisibility(View.INVISIBLE);
+        requestLayout.setVisibility(View.INVISIBLE);
+        back.setVisibility(View.INVISIBLE);
+        requestsProfileButton.setVisibility(View.INVISIBLE);
 
         FirebaseUser firebase_user = FirebaseAuth.getInstance().getCurrentUser();
         assert firebase_user != null;
@@ -119,6 +136,8 @@ public class Profile extends AppCompatActivity {
 
                 if (user != null) {
                     //Toast.makeText(Profile.this, String.valueOf(user.savedTime), Toast.LENGTH_LONG).show();
+                    star.setVisibility(View.VISIBLE);
+                    coin.setVisibility(View.VISIBLE);
                     profile_rank_text.setVisibility(View.VISIBLE);
                     profile_budget_text.setVisibility(View.VISIBLE);
                     log_out_button.setVisibility(View.VISIBLE);
@@ -126,6 +145,7 @@ public class Profile extends AppCompatActivity {
                     timer_button.setVisibility(View.VISIBLE);
                     profile_rank_text.setText("Rank: "+ String.valueOf(user.rank));
                     profile_budget_text.setText("Budget: " + String.valueOf(user.money));
+                    requestsProfileButton.setVisibility(View.VISIBLE);
 
                     if (!user.current_game_id.equals("")) ForwardUserToCurrentGame();
                     // the logged in user is loaded into the "user" parameter.
@@ -141,6 +161,12 @@ public class Profile extends AppCompatActivity {
 
 
     private void viewFriendsRequests() {
+        requestLayout.setVisibility(View.VISIBLE);
+        timer_button.setVisibility(View.INVISIBLE);
+        log_out_button.setVisibility(View.INVISIBLE);
+        play_button.setVisibility(View.INVISIBLE);
+        requestsProfileButton.setVisibility(View.INVISIBLE);
+        back.setVisibility(View.VISIBLE);
         Node friendRequests = user.requested;
         requestLayout.removeAllViews();
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -152,7 +178,7 @@ public class Profile extends AppCompatActivity {
         linearLayout.setLayoutParams(linearParams);
 
         requestLayout.addView(linearLayout);
-        Toast.makeText(Profile.this, (String)friendRequests.obj, Toast.LENGTH_LONG).show();
+        //Toast.makeText(Profile.this, (String)friendRequests.obj, Toast.LENGTH_LONG).show();
 
         while (friendRequests != null){
 
@@ -169,7 +195,7 @@ public class Profile extends AppCompatActivity {
                     text.setText(text_to_show);
                     text.setTextColor(Color.BLACK);
                     linearLayout.addView(text);
-                    Toast.makeText(Profile.this, text_to_show, Toast.LENGTH_LONG).show();
+                    //Toast.makeText(Profile.this, text_to_show, Toast.LENGTH_LONG).show();
 
                     text.setOnClickListener(new View.OnClickListener() {
                         @Override
