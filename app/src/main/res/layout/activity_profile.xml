@@ -87,20 +87,25 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
     <TextView
         android:id="@+id/numOfRequestes"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="272dp"
-        android:layout_marginTop="444dp"
+        android:layout_width="75dp"
+        android:layout_height="33dp"
+        android:layout_marginStart="276dp"
+        android:layout_marginTop="428dp"
+        android:background="@color/teal_700"
         android:text="TextView"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/requestsProfile"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <ScrollView
         android:id="@+id/requestLayoutProfile"
-        android:layout_width="363dp"
-        android:layout_height="381dp"
+        android:layout_width="346dp"
+        android:layout_height="218dp"
         android:layout_marginStart="32dp"
         android:layout_marginTop="159dp"
         android:layout_marginEnd="16dp"
@@ -108,8 +113,16 @@
         android:background="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/Play"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"></ScrollView>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </ScrollView>
 
     <Button
         android:id="@+id/back_profile"
@@ -138,5 +151,6 @@
         app:layout_constraintStart_toEndOf="@+id/profile_rank"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@android:drawable/btn_star_big_on" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -31,7 +31,7 @@ public class Profile extends AppCompatActivity {
     private Button play_button;
     private Button log_out_button;
     private Button timer_button, requestsProfileButton, back;
-    private TextView profile_rank_text, profile_budget_text ;
+    private TextView profile_rank_text, profile_budget_text , numOfRequestes;
     private ScrollView requestLayout;
     private ImageView star, coin;
     @Override
@@ -48,6 +48,7 @@ public class Profile extends AppCompatActivity {
         back = (Button) findViewById(R.id.back_profile);
         log_out_button = (Button) findViewById(R.id.log_out_profile);
         profile_budget_text = (TextView) findViewById(R.id.profile_money);
+        numOfRequestes = (TextView) findViewById(R.id.numOfRequestes);
         profile_rank_text = (TextView) findViewById(R.id.profile_rank);
         timer_button = (Button) findViewById(R.id.timerButton);
         requestsProfileButton = (Button) findViewById(R.id.requestsProfile);
@@ -124,7 +125,7 @@ public class Profile extends AppCompatActivity {
         requestLayout.setVisibility(View.INVISIBLE);
         back.setVisibility(View.INVISIBLE);
         requestsProfileButton.setVisibility(View.INVISIBLE);
-
+        numOfRequestes.setVisibility(View.INVISIBLE);
         FirebaseUser firebase_user = FirebaseAuth.getInstance().getCurrentUser();
         assert firebase_user != null;
         String id = firebase_user.getUid();
@@ -146,6 +147,10 @@ public class Profile extends AppCompatActivity {
                     profile_rank_text.setText("Rank: "+ String.valueOf(user.rank));
                     profile_budget_text.setText("Budget: " + String.valueOf(user.money));
                     requestsProfileButton.setVisibility(View.VISIBLE);
+                    if (user.requested != null){
+                        numOfRequestes.setVisibility(View.VISIBLE);
+                        numOfRequestes.setText("1");
+                    }
 
                     if (!user.current_game_id.equals("")) ForwardUserToCurrentGame();
                     // the logged in user is loaded into the "user" parameter.
@@ -164,6 +169,8 @@ public class Profile extends AppCompatActivity {
         requestLayout.setVisibility(View.VISIBLE);
         timer_button.setVisibility(View.INVISIBLE);
         log_out_button.setVisibility(View.INVISIBLE);
+        coin.setVisibility(View.INVISIBLE);
+        star.setVisibility(View.INVISIBLE);
         play_button.setVisibility(View.INVISIBLE);
         requestsProfileButton.setVisibility(View.INVISIBLE);
         back.setVisibility(View.VISIBLE);
