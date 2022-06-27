@@ -55,14 +55,20 @@ public class MyList {
             this.size--;
             return;
         }
+        boolean tmp = false;
         Node iterator1 = this.head;
         Node iterator2 = this.head.next;
         while (iterator2.next != null) {
-            if (iterator2.obj.equals(obj)) break;
+            if (iterator2.obj.equals(obj)){
+                tmp = true;
+                break;
+            }
             iterator2 = iterator2.next;
             iterator1 = iterator1.next;
         }
-        iterator1.next = iterator2.next;
-        this.size--;
+        if(tmp) {
+            iterator1.next = iterator2.next;
+            this.size--;
+        }
     }
 }
