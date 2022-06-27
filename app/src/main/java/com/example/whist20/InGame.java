@@ -153,7 +153,16 @@ public class InGame extends AppCompatActivity {
                 addFriend.setClickable(true);
 
                 Node players = game.players.head;
-                Player player2 = (Player) players.findByIndex(3);
+                Node iterator = players;
+                while (iterator != null) {
+                    String uid = ((Player) iterator.obj).uid;
+                    if (uid.equals(Profile.user.uid)) break;
+                    iterator = iterator.next;
+                }
+                iterator = iterator.next;
+                if (iterator == null) iterator = players;
+
+                Player player2 = (Player) iterator.obj;
                 playerCardUsername.setText(player2.userName);
                 playerCardBudget.setText("Budget: " + player2.budget);
 
@@ -217,7 +226,18 @@ public class InGame extends AppCompatActivity {
                 addFriend.setClickable(true);
 
                 Node players = game.players.head;
-                Player player3 = (Player) players.findByIndex(3);
+                Node iterator = players;
+                while (iterator != null) {
+                    String uid = ((Player) iterator.obj).uid;
+                    if (uid.equals(Profile.user.uid)) break;
+                    iterator = iterator.next;
+                }
+                iterator = iterator.next;
+                if (iterator == null) iterator = players;
+                iterator = iterator.next;
+                if (iterator == null) iterator = players;
+
+                Player player3 = (Player) iterator.obj;
                 playerCardUsername.setText(player3.userName);
                 playerCardBudget.setText("Budget: " + player3.budget);
 
@@ -282,7 +302,20 @@ public class InGame extends AppCompatActivity {
                 addFriend.setClickable(true);
 
                 Node players = game.players.head;
-                Player player4 = (Player) players.findByIndex(4);
+                Node iterator = players;
+                while (iterator != null) {
+                    String uid = ((Player) iterator.obj).uid;
+                    if (uid.equals(Profile.user.uid)) break;
+                    iterator = iterator.next;
+                }
+                iterator = iterator.next;
+                if (iterator == null) iterator = players;
+                iterator = iterator.next;
+                if (iterator == null) iterator = players;
+                iterator = iterator.next;
+                if (iterator == null) iterator = players;
+
+                Player player4 = (Player) iterator.obj;
                 playerCardUsername.setText(player4.userName);
                 playerCardBudget.setText("Budget: " + player4.budget);
 
@@ -605,6 +638,7 @@ public class InGame extends AppCompatActivity {
 
 
                         myUserName.setText(((Player) iterator.obj).userName);
+                        myUserName.setClickable(false);
                         card_iterator = ((Player) iterator.obj).cards.cards.head;
                         while (card_iterator != null) {
                             Card card = (Card) card_iterator.obj;
@@ -635,6 +669,9 @@ public class InGame extends AppCompatActivity {
 
 
                         if (!((Player)iterator.obj).uid.equals(Profile.user.uid)) {
+                            if (((Player) iterator.obj).uid.equals("")) {
+                                userName3.setClickable(false);
+                            }
                             index = 0;
                             userName3.setText(((Player) iterator.obj).userName);
                             card_iterator = ((Player) iterator.obj).cards.cards.head;
@@ -649,11 +686,15 @@ public class InGame extends AppCompatActivity {
                             if (iterator == null) iterator = players;
                         }
                         else{
+                            //userName3.setVisibility(View.un)
                             userName3.setClickable(false);
                         }
 
 
                         if (!((Player)iterator.obj).uid.equals(Profile.user.uid)) {
+                            if (((Player) iterator.obj).uid.equals("")) {
+                                userName4.setClickable(false);
+                            }
                             index = 0;
                             userName4.setText(((Player) iterator.obj).userName);
                             card_iterator = ((Player) iterator.obj).cards.cards.head;

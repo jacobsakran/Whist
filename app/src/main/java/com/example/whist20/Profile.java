@@ -3,10 +3,15 @@ package com.example.whist20;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ActionBar;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,9 +29,9 @@ public class Profile extends AppCompatActivity {
     public static User user = null;
     private Button play_button;
     private Button log_out_button;
-    private Button timer_button;
+    private Button timer_button, requestsProfileButton;
     private TextView profile_rank_text, profile_budget_text ;
-    int counter = 86400;
+    private ScrollView requestLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,7 +45,17 @@ public class Profile extends AppCompatActivity {
         profile_budget_text = (TextView) findViewById(R.id.profile_money);
         profile_rank_text = (TextView) findViewById(R.id.profile_rank);
         timer_button = (Button) findViewById(R.id.timerButton);
-
+        requestsProfileButton = (Button) findViewById(R.id.requestsProfile);
+        requestLayout = (ScrollView) findViewById(R.id.requestLayoutProfile);
+        requestLayout.setVisibility(View.INVISIBLE);
+        requestsProfileButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                requestLayout.setVisibility(View.VISIBLE);
+                viewFriendsRequests();
+            }
+        });
         timer_button.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -123,6 +138,66 @@ public class Profile extends AppCompatActivity {
             }
         });
     }
+
+
+    private void viewFriendsRequests() {
+        Node friendRequests = user.requested;
+        requestLayout.removeAllViews();
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        requestLayout.setLayoutParams(layoutParams);
+
+        LinearLayout linearLayout = new LinearLayout(this);
+        LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        linearLayout.setLayoutParams(linearParams);
+
+        requestLayout.addView(linearLayout);
+        Toast.makeText(Profile.this, (String)friendRequests.obj, Toast.LENGTH_LONG).show();
+
+        while (friendRequests != null){
+
+            String uid = (String) friendRequests.obj;
+            FirebaseDatabase.getInstance().getReference("Users").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    User requestedUser = snapshot.getValue(User.class);
+                    assert requestedUser != null;
+                    TextView text = new TextView(Profile.this);
+                    text.setTextSize(20);
+                    //text.setHint((String) game.game_name);
+                    String text_to_show = "Add " + (String) requestedUser.username;
+                    text.setText(text_to_show);
+                    text.setTextColor(Color.BLACK);
+                    linearLayout.addView(text);
+                    Toast.makeText(Profile.this, text_to_show, Toast.LENGTH_LONG).show();
+
+                    text.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if (requestedUser.friends == null) requestedUser.friends = new Node();
+                            requestedUser.friends.addValue(uid);
+                            FirebaseDatabase.getInstance().getReference("Users").child(uid)
+                                    .child("friends").setValue(requestedUser.friends);
+
+                            if (user.friends == null) user.friends = new Node();
+                            user.friends.addValue(requestedUser.uid);
+                            FirebaseDatabase.getInstance().getReference("Users").child(user.uid)
+                                    .child("friends").setValue(user.friends);
+                            // TODO remove from requested
+                        }
+                    });
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+            friendRequests = friendRequests.next;
+        }
+    }
+
 
 
     private void ForwardUserToCurrentGame() {
