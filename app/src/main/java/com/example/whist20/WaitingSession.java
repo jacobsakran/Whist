@@ -73,28 +73,27 @@ public class WaitingSession extends AppCompatActivity {
     }
 
     protected void StartGame() {
-        if (!Profile.user.uid.equals(((Player) game.players.head.next.obj).uid)) return;
         progressBar.setVisibility(View.VISIBLE);
-        FirebaseDatabase.getInstance().getReference("WaitingSessions").child(game.game_name).setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (!task.isSuccessful()) {
-                    Toast.makeText(WaitingSession.this, "Failed to start game", Toast.LENGTH_LONG).show();
-                    return;
-                }
-
+        if (!Profile.user.uid.equals(((Player) game.players.head.next.obj).uid)) return;
                 FirebaseDatabase.getInstance().getReference("ActiveGames").child(game.game_name).setValue(game)
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    progressBar.setVisibility(View.INVISIBLE);
-                                    startActivity(new Intent(WaitingSession.this, InGame.class));
-                                }
-                                else Toast.makeText(WaitingSession.this, "Failed to start game", Toast.LENGTH_LONG).show();
+                                if (!task.isSuccessful()) Toast.makeText(WaitingSession.this, "Failed to start game", Toast.LENGTH_LONG).show();
+                                FirebaseDatabase.getInstance().getReference("WaitingSessions").child(game.game_name).setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        progressBar.setVisibility(View.INVISIBLE);
+                                        if (!task.isSuccessful()) {
+                                            Toast.makeText(WaitingSession.this, "Failed to start game", Toast.LENGTH_LONG).show();
+                                            return;
+                                        }
+                                        startActivity(new Intent(WaitingSession.this, InGame.class));
+                                    }
+
+                                });
                             }
-                        });
-            }
+
         });
 
     }
@@ -109,6 +108,7 @@ public class WaitingSession extends AppCompatActivity {
 
                 if (game == null) {
                     snapshot.getRef().removeEventListener(this);
+                    progressBar.setVisibility(View.INVISIBLE);
                     startActivity(new Intent(WaitingSession.this, HomePage.class));
                     return;
                 }
@@ -127,14 +127,12 @@ public class WaitingSession extends AppCompatActivity {
                 if (players != null) {
                     player3.setText(((Player) players.obj).userName);
                     players = players.next;
-                    snapshot.getRef().removeEventListener(this);
                     StartGame();
                     return;
                 } else player3.setText("Waiting For Player 3...");
 
                 if (players != null) {
                     player4.setText(((Player) players.obj).userName);
-                    snapshot.getRef().removeEventListener(this);
                     StartGame();
                 }
                 else  player4.setText("Waiting For Player 4...");

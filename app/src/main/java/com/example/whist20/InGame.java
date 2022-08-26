@@ -8,6 +8,8 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -69,6 +71,7 @@ public class InGame extends AppCompatActivity {
     private Button playerCardExit;
 
     private GameState game = null;
+    private CountDownTimer timer = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -132,8 +135,6 @@ public class InGame extends AppCompatActivity {
                 (ImageView) findViewById(R.id.card27), (ImageView) findViewById(R.id.card28),(ImageView) findViewById(R.id.card29),
                 (ImageView) findViewById(R.id.card30), (ImageView) findViewById(R.id.card31), (ImageView) findViewById(R.id.card32)};
 
-
-
         handleDisconnection();
         initOnClicks();
         showPage();
@@ -145,15 +146,31 @@ public class InGame extends AppCompatActivity {
         FirebaseDatabase.getInstance().getReference("DisconnectedUsers").child(game_name).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                DataSnapshot disconnected_snapshot = snapshot;
                 FirebaseDatabase.getInstance().getReference("ActiveGames").child(game_name).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         GameState tmp = GameState.convertSnapshotToGameState(snapshot);
                         assert tmp != null;
-                        if (!snapshot.hasChild(tmp.currentPlayerTurn().uid)) return;
-                        while (snapshot.hasChild(tmp.currentPlayerTurn().uid)) tmp.nextPlayerTurn();
+                        if (!disconnected_snapshot.hasChild(tmp.currentPlayerTurn().uid) && tmp.num_of_ready_players == tmp.numOfPlayers) return;
+                        while (disconnected_snapshot.hasChild(tmp.currentPlayerTurn().uid)) tmp.nextPlayerTurn();
 
                         if (!tmp.currentPlayerTurn().uid.equals(Profile.user.uid)) return;
+                        if (tmp.num_of_ready_players < tmp.numOfPlayers) {
+                            Toast.makeText(InGame.this, "wohojacob", Toast.LENGTH_LONG).show();
+
+                            Node iterator = tmp.players.head;
+                            while (iterator != null) {
+                                if (disconnected_snapshot.hasChild(((Player) iterator.obj).uid) && !((Player) iterator.obj).uid.equals("")) {
+                                    tmp.removePlayerByUid(((Player) iterator.obj).uid);
+                                    iterator = tmp.players.head;
+                                }
+                                iterator = iterator.next;
+                            }
+                            assert tmp.players.head != null;
+                            tmp.currentPlayer = tmp.players.head.next;
+                        }
+
                         FirebaseDatabase.getInstance().getReference("ActiveGames").child(game_name).setValue(tmp);
                     }
 
@@ -400,6 +417,7 @@ public class InGame extends AppCompatActivity {
         this.hit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                timer.cancel();
                 if (game == null) {
                     Toast.makeText(InGame.this, "Something went wrong, try again", Toast.LENGTH_LONG).show();
                     return;
@@ -425,6 +443,7 @@ public class InGame extends AppCompatActivity {
         this.miss.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                timer.cancel();
                 if (game == null) {
                     Toast.makeText(InGame.this, "Something went wrong, try again", Toast.LENGTH_LONG).show();
                     return;
@@ -435,7 +454,6 @@ public class InGame extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         game.nextPlayerTurn();
                         if (snapshot.exists()) while (snapshot.hasChild(game.currentPlayerTurn().uid) && !game.currentPlayerTurn().uid.equals("")) game.nextPlayerTurn();
-                        Toast.makeText(InGame.this, game.currentPlayerTurn().userName, Toast.LENGTH_LONG).show();
 
                         FirebaseDatabase.getInstance().getReference("ActiveGames").child(Profile.user.current_game_id)
                                 .setValue(game).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -468,7 +486,6 @@ public class InGame extends AppCompatActivity {
                                         game = GameState.convertSnapshotToGameState(snapshot);
                                         if (game == null) {
                                             FirebaseDatabase.getInstance().getReference("Users").child(Profile.user.uid).child("current_game_id").setValue("");
-                                            Profile.user.current_game_id = "";
                                             startActivity(new Intent(InGame.this, HomePage.class));
                                             return;
                                         }
@@ -478,7 +495,7 @@ public class InGame extends AppCompatActivity {
                                         if (game.numOfPlayers == 1) game = null;
 
 
-                                        FirebaseDatabase.getInstance().getReference("Users").child(Profile.user.uid).child("current_game_id").setValue("");Profile.user.current_game_id = "";
+                                        FirebaseDatabase.getInstance().getReference("Users").child(Profile.user.uid).child("current_game_id").setValue("");
                                         FirebaseDatabase.getInstance().getReference("ActiveGames").child(game_name).setValue(game);
                                     }
 
@@ -546,68 +563,69 @@ public class InGame extends AppCompatActivity {
     }
 
     private void dealerPlay() {
-        // TODO: show the rest of the players the cards that the dealer has opened
-        Dealer dealer = (Dealer) game.players.head.obj;
-        if (dealer.cards.cards.size < 2) {
-            if (!((Player) game.players.head.next.obj).uid.equals(Profile.user.uid)) return;
-            try {
-                Thread.sleep(300);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            dealer.cards.addCard(game.dict.randomCard());
-            game.nextPlayerTurn();
-            game.is_active = true;
-            FirebaseDatabase.getInstance().getReference("ActiveGames").child(Profile.user.current_game_id).setValue(game);
-            return;
-        }
+        FirebaseDatabase.getInstance().getReference("DisconnectedUsers").child(game.game_name).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Dealer dealer = (Dealer) game.players.head.obj;
+                game.nextPlayerTurn();
+                while (snapshot.hasChild(game.currentPlayerTurn().uid)) game.nextPlayerTurn();
 
-        if (!game.is_active) {
-            if (!((Player) game.players.head.next.obj).uid.equals(Profile.user.uid)) return;
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            FirebaseDatabase.getInstance().getReference("DisconnectedUsers").child(game.game_name).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    Toast.makeText(InGame.this, "XXXX", Toast.LENGTH_LONG).show();
+                if (dealer.cards.cards.size < 2) {
+                    if (!game.currentPlayerTurn().uid.equals(Profile.user.uid)) return;
+                    try {
+                        Thread.sleep(300);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    dealer.cards.addCard(game.dict.randomCard());
+                    game.is_active = true;
+                    FirebaseDatabase.getInstance().getReference("ActiveGames").child(Profile.user.current_game_id).setValue(game);
+                    return;
+                }
+
+                if (!game.is_active) {
+                    if (!game.currentPlayerTurn().uid.equals(Profile.user.uid)) return;
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
 
                     Node iterator = game.players.head;
                     while (iterator != null) {
                         if (snapshot.hasChild(((Player) iterator.obj).uid) && !((Player) iterator.obj).uid.equals("")) {
                             game.removePlayerByUid(((Player) iterator.obj).uid);
-                            Toast.makeText(InGame.this, ((Player) iterator.obj).userName, Toast.LENGTH_LONG).show();
                             iterator = game.players.head;
                         }
                         iterator = iterator.next;
                     }
                     game.restartGame();
                     FirebaseDatabase.getInstance().getReference("ActiveGames").child(Profile.user.current_game_id).setValue(game);
-                    Toast.makeText(InGame.this, "YYYY", Toast.LENGTH_LONG).show();
+                } else {
+                    dealer.openNewCard(game);
+                    Player player = game.findPlayerByUid(Profile.user.uid);
+                    if (dealer.cards.sum() > player.cards.sum() || player.cards.sum() == -1) Toast.makeText(InGame.this, "You Lost the Bet", Toast.LENGTH_LONG).show();
+                    else Toast.makeText(InGame.this, "You won the bet +" + String.valueOf(game.game_money * 2), Toast.LENGTH_LONG).show();
+                    if (!game.currentPlayerTurn().uid.equals(Profile.user.uid)) return;
+                    game.is_active = false;
+                    game.currentPlayer = game.players.head;
+                    FirebaseDatabase.getInstance().getReference("ActiveGames").child(Profile.user.current_game_id).setValue(game);
                 }
+            }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
 
-                }
-            });
-        } else {
-            dealer.openNewCard(game);
-            Player player = game.findPlayerByUid(Profile.user.uid);
-            if (dealer.cards.sum() > player.cards.sum() || player.cards.sum() == -1) Toast.makeText(InGame.this, "You Lost the Bet", Toast.LENGTH_LONG).show();
-            else Toast.makeText(InGame.this, "You won the bet +" + String.valueOf(game.game_money * 2), Toast.LENGTH_LONG).show();
-            if (!((Player) game.players.head.next.obj).uid.equals(Profile.user.uid)) return;
-            game.is_active = false;
-            //if (!((Player) game.players.head.next.obj).uid.equals(Profile.user.uid)) return;
-            FirebaseDatabase.getInstance().getReference("ActiveGames").child(Profile.user.current_game_id).setValue(game);
-        }
+            }
+        });
+
 
     }
 
     private void notFoundCase() {
-        FirebaseDatabase.getInstance().getReference("DisconnectedUsers").child(game.game_name).setValue(null);
+        FirebaseDatabase.getInstance().getReference("DisconnectedUsers").child(Profile.user.current_game_id).child(Profile.user.uid).onDisconnect().cancel();
+        FirebaseDatabase.getInstance().getReference("DisconnectedUsers").child(Profile.user.current_game_id).child(Profile.user.uid).setValue(null);
+        Profile.user.current_game_id = "";
         startActivity(new Intent(InGame.this, HomePage.class));
     }
 
@@ -844,9 +862,44 @@ public class InGame extends AppCompatActivity {
                                                     Toast.makeText(InGame.this, "Failed to update game on FireBase", Toast.LENGTH_LONG).show();
                                             }
                                         });
-                            }
-                            else {
-                                turn.setText("Your Turn");
+                            } else {
+                                timer = new CountDownTimer(10000, 1000) {
+
+                                    public void onTick(long millisUntilFinished) {
+                                        turn.setText("Your Turn - " + (millisUntilFinished / 1000));
+                                    }
+
+                                    public void onFinish() {
+                                        Toast.makeText(InGame.this, "Time is up", Toast.LENGTH_LONG).show();
+                                        if (game == null) {
+                                            Toast.makeText(InGame.this, "Something went wrong, try again", Toast.LENGTH_LONG).show();
+                                            return;
+                                        }
+
+                                        FirebaseDatabase.getInstance().getReference("DisconnectedUsers").child(game.game_name).addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                game.nextPlayerTurn();
+                                                if (snapshot.exists()) while (snapshot.hasChild(game.currentPlayerTurn().uid) && !game.currentPlayerTurn().uid.equals("")) game.nextPlayerTurn();
+
+                                                FirebaseDatabase.getInstance().getReference("ActiveGames").child(Profile.user.current_game_id)
+                                                        .setValue(game).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                if (!task.isSuccessful())
+                                                                    Toast.makeText(InGame.this, "Failed to update game on FireBase", Toast.LENGTH_LONG).show();
+                                                            }
+                                                        });
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                            }
+                                        });
+                                    }
+                                }.start();
+                                turn.setText("Your Turn - 10s");
                             }
                         } else {
                             hit.setClickable(false);

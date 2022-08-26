@@ -158,10 +158,10 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
     }
 
     private void ForwardUserToCurrentGame() {
-        FirebaseDatabase.getInstance().getReference("WaitingSessions").addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference("WaitingSessions").child(Profile.user.current_game_id).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.hasChild(Profile.user.current_game_id)) {
+                if (snapshot.exists()) {
                     startActivity(new Intent(HomePage.this, WaitingSession.class));
                     return;
                 }
