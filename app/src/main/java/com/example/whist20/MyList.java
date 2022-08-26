@@ -58,7 +58,7 @@ public class MyList {
         boolean tmp = false;
         Node iterator1 = this.head;
         Node iterator2 = this.head.next;
-        while (iterator2.next != null) {
+        while (iterator2 != null) {
             if (iterator2.obj.equals(obj)){
                 tmp = true;
                 break;

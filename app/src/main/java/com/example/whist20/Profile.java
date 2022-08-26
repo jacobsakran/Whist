@@ -245,6 +245,7 @@ public class Profile extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (snapshot.hasChild(user.current_game_id)) {
+                            FirebaseDatabase.getInstance().getReference("DisconnectedUsers").child(user.current_game_id).child(user.uid).setValue(null);
                             startActivity(new Intent(Profile.this, InGame.class));
                             return;
                         }

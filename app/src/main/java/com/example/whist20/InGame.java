@@ -1,11 +1,13 @@
 package com.example.whist20;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -17,6 +19,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 public class InGame extends AppCompatActivity {
@@ -127,8 +131,44 @@ public class InGame extends AppCompatActivity {
         this.player4_cards = new ImageView[]{(ImageView) findViewById(R.id.card25), (ImageView) findViewById(R.id.card26),
                 (ImageView) findViewById(R.id.card27), (ImageView) findViewById(R.id.card28),(ImageView) findViewById(R.id.card29),
                 (ImageView) findViewById(R.id.card30), (ImageView) findViewById(R.id.card31), (ImageView) findViewById(R.id.card32)};
+
+
+
+        handleDisconnection();
         initOnClicks();
         showPage();
+    }
+
+    private void handleDisconnection() {
+        String game_name = Profile.user.current_game_id;
+        FirebaseDatabase.getInstance().getReference("DisconnectedUsers").child(game_name).child(Profile.user.uid).onDisconnect().setValue(Profile.user.username);
+        FirebaseDatabase.getInstance().getReference("DisconnectedUsers").child(game_name).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                FirebaseDatabase.getInstance().getReference("ActiveGames").child(game_name).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        GameState tmp = GameState.convertSnapshotToGameState(snapshot);
+                        assert tmp != null;
+                        if (!snapshot.hasChild(tmp.currentPlayerTurn().uid)) return;
+                        while (snapshot.hasChild(tmp.currentPlayerTurn().uid)) tmp.nextPlayerTurn();
+
+                        if (!tmp.currentPlayerTurn().uid.equals(Profile.user.uid)) return;
+                        FirebaseDatabase.getInstance().getReference("ActiveGames").child(game_name).setValue(tmp);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     private int convertCardToImage(Card card) {
@@ -390,45 +430,68 @@ public class InGame extends AppCompatActivity {
                     return;
                 }
 
-                game.nextPlayerTurn();
-                FirebaseDatabase.getInstance().getReference("ActiveGames").child(Profile.user.current_game_id)
-                        .setValue(game).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (!task.isSuccessful())
-                                    Toast.makeText(InGame.this, "Failed to update game on FireBase", Toast.LENGTH_LONG).show();
-                            }
-                        });
+                FirebaseDatabase.getInstance().getReference("DisconnectedUsers").child(game.game_name).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        game.nextPlayerTurn();
+                        if (snapshot.exists()) while (snapshot.hasChild(game.currentPlayerTurn().uid) && !game.currentPlayerTurn().uid.equals("")) game.nextPlayerTurn();
+                        Toast.makeText(InGame.this, game.currentPlayerTurn().userName, Toast.LENGTH_LONG).show();
+
+                        FirebaseDatabase.getInstance().getReference("ActiveGames").child(Profile.user.current_game_id)
+                                .setValue(game).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (!task.isSuccessful())
+                                            Toast.makeText(InGame.this, "Failed to update game on FireBase", Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
             }
         });
 
         this.exit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FirebaseDatabase.getInstance().getReference("ActiveGames").child(game.game_name)
-                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                FirebaseDatabase.getInstance().getReference("ActiveGames").child(game.game_name).runTransaction(new Transaction.Handler() {
+                            @NonNull
                             @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                game = GameState.convertSnapshotToGameState(snapshot);
-                                if (game == null) {
-                                    FirebaseDatabase.getInstance().getReference("Users").child(Profile.user.uid).child("current_game_id").setValue("");
-                                    Profile.user.current_game_id = "";
-                                    startActivity(new Intent(InGame.this, HomePage.class));
-                                    return;
-                                }
+                            public Transaction.Result doTransaction(@NonNull MutableData currentData) {
+                                FirebaseDatabase.getInstance().getReference("ActiveGames").child(game.game_name).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        game = GameState.convertSnapshotToGameState(snapshot);
+                                        if (game == null) {
+                                            FirebaseDatabase.getInstance().getReference("Users").child(Profile.user.uid).child("current_game_id").setValue("");
+                                            Profile.user.current_game_id = "";
+                                            startActivity(new Intent(InGame.this, HomePage.class));
+                                            return;
+                                        }
 
-                                game.removePlayerByUid(Profile.user.uid);
-                                String game_name = game.game_name;
-                                if (game.numOfPlayers == 1) game = null;
+                                        game.removePlayerByUid(Profile.user.uid);
+                                        String game_name = game.game_name;
+                                        if (game.numOfPlayers == 1) game = null;
 
 
-                                FirebaseDatabase.getInstance().getReference("Users").child(Profile.user.uid).child("current_game_id").setValue("");
-                                Profile.user.current_game_id = "";
-                                FirebaseDatabase.getInstance().getReference("ActiveGames").child(game_name).setValue(game);
+                                        FirebaseDatabase.getInstance().getReference("Users").child(Profile.user.uid).child("current_game_id").setValue("");Profile.user.current_game_id = "";
+                                        FirebaseDatabase.getInstance().getReference("ActiveGames").child(game_name).setValue(game);
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                    }
+                                });
+                                return null;
                             }
 
                             @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
+                            public void onComplete(@Nullable DatabaseError error, boolean committed, @Nullable DataSnapshot currentData) {
 
                             }
                         });
@@ -440,20 +503,32 @@ public class InGame extends AppCompatActivity {
             public void onClick(View view) {
                 exit.setVisibility(View.INVISIBLE);
                 continue_game.setVisibility(View.INVISIBLE);
-                FirebaseDatabase.getInstance().getReference("ActiveGames").child(game.game_name)
-                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                FirebaseDatabase.getInstance().getReference("ActiveGames").child(game.game_name).runTransaction(new Transaction.Handler() {
+                            @NonNull
                             @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                game = GameState.convertSnapshotToGameState(snapshot);
-                                assert game != null;
-                                Player tmp = game.findPlayerByUid(Profile.user.uid);
-                                tmp.is_ready = true;
-                                game.num_of_ready_players++;
-                                FirebaseDatabase.getInstance().getReference("ActiveGames").child(Profile.user.current_game_id).setValue(game);
+                            public Transaction.Result doTransaction(@NonNull MutableData currentData) {
+                                FirebaseDatabase.getInstance().getReference("ActiveGames").child(game.game_name).
+                                        addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                game = GameState.convertSnapshotToGameState(snapshot);
+                                                assert game != null;
+                                                Player tmp = game.findPlayerByUid(Profile.user.uid);
+                                                tmp.is_ready = true;
+                                                game.num_of_ready_players++;
+                                                FirebaseDatabase.getInstance().getReference("ActiveGames").child(Profile.user.current_game_id).setValue(game);
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                            }
+                                        });
+                                return null;
                             }
 
                             @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
+                            public void onComplete(@Nullable DatabaseError error, boolean committed, @Nullable DataSnapshot currentData) {
 
                             }
                         });
@@ -474,6 +549,7 @@ public class InGame extends AppCompatActivity {
         // TODO: show the rest of the players the cards that the dealer has opened
         Dealer dealer = (Dealer) game.players.head.obj;
         if (dealer.cards.cards.size < 2) {
+            if (!((Player) game.players.head.next.obj).uid.equals(Profile.user.uid)) return;
             try {
                 Thread.sleep(300);
             } catch (InterruptedException e) {
@@ -487,25 +563,51 @@ public class InGame extends AppCompatActivity {
         }
 
         if (!game.is_active) {
+            if (!((Player) game.players.head.next.obj).uid.equals(Profile.user.uid)) return;
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            game.restartGame();
-        }
-        else {
+            FirebaseDatabase.getInstance().getReference("DisconnectedUsers").child(game.game_name).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    Toast.makeText(InGame.this, "XXXX", Toast.LENGTH_LONG).show();
+
+                    Node iterator = game.players.head;
+                    while (iterator != null) {
+                        if (snapshot.hasChild(((Player) iterator.obj).uid) && !((Player) iterator.obj).uid.equals("")) {
+                            game.removePlayerByUid(((Player) iterator.obj).uid);
+                            Toast.makeText(InGame.this, ((Player) iterator.obj).userName, Toast.LENGTH_LONG).show();
+                            iterator = game.players.head;
+                        }
+                        iterator = iterator.next;
+                    }
+                    game.restartGame();
+                    FirebaseDatabase.getInstance().getReference("ActiveGames").child(Profile.user.current_game_id).setValue(game);
+                    Toast.makeText(InGame.this, "YYYY", Toast.LENGTH_LONG).show();
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        } else {
             dealer.openNewCard(game);
             Player player = game.findPlayerByUid(Profile.user.uid);
             if (dealer.cards.sum() > player.cards.sum() || player.cards.sum() == -1) Toast.makeText(InGame.this, "You Lost the Bet", Toast.LENGTH_LONG).show();
             else Toast.makeText(InGame.this, "You won the bet +" + String.valueOf(game.game_money * 2), Toast.LENGTH_LONG).show();
             if (!((Player) game.players.head.next.obj).uid.equals(Profile.user.uid)) return;
             game.is_active = false;
+            //if (!((Player) game.players.head.next.obj).uid.equals(Profile.user.uid)) return;
+            FirebaseDatabase.getInstance().getReference("ActiveGames").child(Profile.user.current_game_id).setValue(game);
         }
-        FirebaseDatabase.getInstance().getReference("ActiveGames").child(Profile.user.current_game_id).setValue(game);
+
     }
 
     private void notFoundCase() {
+        FirebaseDatabase.getInstance().getReference("DisconnectedUsers").child(game.game_name).setValue(null);
         startActivity(new Intent(InGame.this, HomePage.class));
     }
 
@@ -743,7 +845,9 @@ public class InGame extends AppCompatActivity {
                                             }
                                         });
                             }
-                            else turn.setText("Your Turn");
+                            else {
+                                turn.setText("Your Turn");
+                            }
                         } else {
                             hit.setClickable(false);
                             miss.setClickable(false);
