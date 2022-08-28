@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
 
 import java.util.HashMap;
 import java.util.Vector;
@@ -105,12 +106,22 @@ public class GameState {
             if (iterator.obj == null) break;
             Player player = (Player) iterator.obj;
             if (player.cards.sum() >= dealer_sum && player.cards.sum() > -1) {
-                FirebaseDatabase.getInstance().getReference("Users").child(player.uid).child("money").setValue(player.budget + game_money * 2);
+                if (player.isDouble) FirebaseDatabase.getInstance().getReference("Users").child(player.uid).child("money").setValue(player.budget + game_money * 4);
+                else FirebaseDatabase.getInstance().getReference("Users").child(player.uid).child("money").setValue(player.budget + game_money * 2);
+
                 player.budget += game_money * 2;
-            }
+                player.streak++;
+                player.num_of_rounds++;
+                player.num_of_wins++;
+                player.rank += player.streak / 2 + ((int) ((player.num_of_wins / player.num_of_rounds) * 2)) * 2;
+                player.rank = Math.max(player.rank, 0);
+                FirebaseDatabase.getInstance().getReference("Users").child(player.uid).child("rank").setValue(player.rank);
+            } else FirebaseDatabase.getInstance().getReference("Users").child(player.uid).child("rank").setValue(Math.max(player.rank - 3, 0));
+
 
             iterator = iterator.next;
             player.is_ready = false;
+            player.isDouble = false;
         }
         this.currentPlayer = this.players.head.next;
         this.num_of_ready_players = 1;
@@ -173,6 +184,62 @@ public class GameState {
         game.first_open = snapshot.child("first_open").getValue(boolean.class);
         game.num_of_ready_players = snapshot.child("num_of_ready_players").getValue(int.class);
         game.maxPlayersNum = snapshot.child("maxPlayersNum").getValue(int.class);
+        return game;
+    }
+
+    public static GameState convertMutableDataToGameState(@NonNull MutableData currentData){
+        if (!currentData.hasChildren()) return null;
+        GameState game = new GameState(currentData.child("game_name").getValue(String.class), currentData.child("game_money").getValue(int.class));
+
+        // Converting players
+        MutableData players_iterator =  currentData.child("players").child("head");
+        boolean is_dealer = true;
+        Dealer dealer = null;
+        while (players_iterator.hasChildren()) {
+            if (is_dealer) {
+                dealer = players_iterator.child("obj").getValue(Dealer.class);
+                assert dealer != null;
+                dealer.cards = new CardsSet();
+            }
+
+            Player player = players_iterator.child("obj").getValue(Player.class);
+            assert player != null;
+            player.cards = new CardsSet();
+
+            MutableData cards_iterator = players_iterator.child("obj").child("cards").child("cards").child("head");
+            while (cards_iterator.hasChildren()) {
+                Card card = cards_iterator.child("obj").getValue(Card.class);
+                player.cards.addCard(card);
+                cards_iterator = cards_iterator.child("next");
+            }
+
+            if (is_dealer) {
+                dealer.cards = player.cards;
+                game.addPlayer(dealer);
+            }
+            else game.addPlayer(player);
+
+            is_dealer = false;
+            players_iterator = players_iterator.child("next");
+        }
+
+        // Converting currentPlayer
+        String current_player_uid = currentData.child("currentPlayer").child("obj").child("uid").getValue(String.class);
+        Node iterator = game.players.head;
+        while (iterator != null) {
+            if (((Player) iterator.obj).uid.equals(current_player_uid)) {
+                game.currentPlayer = iterator;
+                break;
+            }
+            iterator = iterator.next;
+        }
+
+        // Converting dict
+        game.dict = Dict.convertMutableDataToDict(currentData.child("dict"));
+        game.is_active = currentData.child("is_active").getValue(boolean.class);
+        game.first_open = currentData.child("first_open").getValue(boolean.class);
+        game.num_of_ready_players = currentData.child("num_of_ready_players").getValue(int.class);
+        game.maxPlayersNum = currentData.child("maxPlayersNum").getValue(int.class);
         return game;
     }
 }

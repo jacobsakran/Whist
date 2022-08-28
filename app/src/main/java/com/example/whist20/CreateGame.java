@@ -77,7 +77,7 @@ public class CreateGame extends AppCompatActivity implements View.OnClickListene
 
                                 GameState game = new GameState(game_name, game_money);
                                 game.addPlayer(new Dealer("", "Dealer", 0));
-                                game.addPlayer(new Player(Profile.user.uid, Profile.user.username, Profile.user.money));
+                                game.addPlayer(new Player(Profile.user.uid, Profile.user.username, Profile.user.money, Profile.user.rank));
                                 FirebaseDatabase.getInstance().getReference("WaitingSessions").child(game_name)
                                         .setValue(game).addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override

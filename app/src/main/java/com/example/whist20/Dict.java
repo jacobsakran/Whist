@@ -1,9 +1,12 @@
 package com.example.whist20;
 
+import android.widget.MultiAutoCompleteTextView;
+
 import androidx.annotation.NonNull;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.MutableData;
 import com.google.firebase.database.core.SnapshotHolder;
 
 import java.util.HashMap;
@@ -54,6 +57,20 @@ public class Dict {
 
         DataSnapshot iterator = snapshot.child("usedCards").child("head");
         while (iterator.exists()) {
+            Card card = iterator.child("obj").getValue(Card.class);
+            dict.usedCards.addNode(card);
+            iterator = iterator.child("next");
+        }
+
+        return dict;
+    }
+
+    public static Dict convertMutableDataToDict(@NonNull MutableData currentData) {
+        if (!currentData.hasChildren()) return null;
+        Dict dict = new Dict();
+
+        MutableData iterator = currentData.child("usedCards").child("head");
+        while (iterator.hasChildren()) {
             Card card = iterator.child("obj").getValue(Card.class);
             dict.usedCards.addNode(card);
             iterator = iterator.child("next");

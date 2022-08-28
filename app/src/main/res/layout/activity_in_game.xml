@@ -573,4 +573,31 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <Button
+        android:id="@+id/doubleButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="38dp"
+        android:layout_marginTop="41dp"
+        android:layout_marginBottom="8dp"
+        android:text="Double?"
+        app:layout_constraintBottom_toTopOf="@+id/hitButton"
+        app:layout_constraintEnd_toStartOf="@+id/noDoubleButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/card1" />
+
+    <Button
+        android:id="@+id/noDoubleButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="120dp"
+        android:layout_marginTop="37dp"
+        android:layout_marginEnd="45dp"
+        android:layout_marginBottom="2dp"
+        android:text="No Double"
+        app:layout_constraintBottom_toTopOf="@+id/missButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/doubleButton"
+        app:layout_constraintTop_toBottomOf="@+id/card7" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
