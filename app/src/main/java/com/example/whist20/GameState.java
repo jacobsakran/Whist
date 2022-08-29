@@ -109,7 +109,7 @@ public class GameState {
                 if (player.isDouble) FirebaseDatabase.getInstance().getReference("Users").child(player.uid).child("money").setValue(player.budget + game_money * 4);
                 else FirebaseDatabase.getInstance().getReference("Users").child(player.uid).child("money").setValue(player.budget + game_money * 2);
 
-                player.budget += game_money * 2;
+                player.budget += player.isDouble ? game_money * 4 : game_money * 2;
                 player.streak++;
                 player.num_of_rounds++;
                 player.num_of_wins++;
