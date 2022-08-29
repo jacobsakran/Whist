@@ -7,9 +7,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,12 +27,15 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class WaitingSession extends AppCompatActivity {
     private GameState game;
     private TextView player1, player2, player3, player4;
     private ProgressBar progressBar;
     private Button exit;
+    private ScrollView scrollViewInvites;
+    private View background;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +51,15 @@ public class WaitingSession extends AppCompatActivity {
         player2 = (TextView) findViewById(R.id.player2);
         player3 = (TextView) findViewById(R.id.player3);
         player4 = (TextView) findViewById(R.id.player4);
+        scrollViewInvites = (ScrollView) findViewById(R.id.scrollViewInvites);
+        scrollViewInvites.setVisibility(View.INVISIBLE);
+        background = findViewById(R.id.waitingSessionBackground);
+        background.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                scrollViewInvites.setVisibility(View.INVISIBLE);
+            }
+        });
         progressBar = (ProgressBar) findViewById(R.id.waitingSessionProgressBar);
         progressBar.setVisibility(View.INVISIBLE);
 
@@ -80,16 +94,53 @@ public class WaitingSession extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (!task.isSuccessful()) Toast.makeText(WaitingSession.this, "Failed to start game", Toast.LENGTH_LONG).show();
-                                FirebaseDatabase.getInstance().getReference("WaitingSessions").child(game.game_name).setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        progressBar.setVisibility(View.INVISIBLE);
-                                        if (!task.isSuccessful()) {
-                                            Toast.makeText(WaitingSession.this, "Failed to start game", Toast.LENGTH_LONG).show();
-                                            return;
+
+                                    FirebaseDatabase.getInstance().getReference("invitings").child(Profile.user.uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            DataSnapshot invited = snapshot;
+                                            FirebaseDatabase.getInstance().getReference("Users").addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                    for (DataSnapshot child : snapshot.getChildren()) {
+                                                        if (!invited.hasChild(Objects.requireNonNull(child.getKey()))) continue;
+                                                        FirebaseDatabase.getInstance().getReference("Users").child(Objects.requireNonNull(child.getKey()))
+                                                                .child("invites").addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                    @Override
+                                                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                                        if (!snapshot.exists()) return;
+                                                                        Node tmp = snapshot.getValue(Node.class);
+                                                                        assert tmp != null;
+                                                                        tmp.removeByValue(Profile.user.username);
+                                                                        FirebaseDatabase.getInstance().getReference("Users").child(Objects.requireNonNull(child.getKey()))
+                                                                                .child("invites").setValue(tmp);
+                                                                    }
+
+                                                                    @Override
+                                                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                                                    }
+                                                                });
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                                }
+                                            });
+
+                                            FirebaseDatabase.getInstance().getReference("invitings").child(Profile.user.uid).setValue(null);
+                                            startActivity(new Intent(WaitingSession.this, InGame.class));
                                         }
-                                        startActivity(new Intent(WaitingSession.this, InGame.class));
-                                    }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+
+                                        }
+                                    });
+
+                                
 
                                 });
                             }
@@ -136,6 +187,66 @@ public class WaitingSession extends AppCompatActivity {
                     StartGame();
                 }
                 else  player4.setText("Waiting For Player 4...");
+
+                FirebaseDatabase.getInstance().getReference("Users").child(Profile.user.uid).child("friends").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (!snapshot.exists()) return;
+                        Node friends = snapshot.getValue(Node.class);
+                        while (friends != null) {
+                            TextView friend_view = new TextView(WaitingSession.this);
+                            scrollViewInvites.addView(friend_view);
+                            friend_view.setTextSize(20);
+                            friend_view.setHint((String) friends.obj);
+                            FirebaseDatabase.getInstance().getReference("Users").child((String) friends.obj).child("username").addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    friend_view.setText(snapshot.getValue(String.class));
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
+
+                            friend_view.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    FirebaseDatabase.getInstance().getReference("Users").child(friend_view.getHint()
+                                            .toString().trim()).child("invites").addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            if (!snapshot.exists()) return;
+                                            Node tmp = snapshot.getValue(Node.class);
+                                            assert tmp != null;
+                                            tmp.addValue(Profile.user.username);
+                                            FirebaseDatabase.getInstance().getReference("Users").child(friend_view.getHint().toString().trim())
+                                                    .child("invites").setValue(tmp).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    FirebaseDatabase.getInstance().getReference("invitings").child(Profile.user.uid).child(friend_view.getHint().toString().trim()).setValue("");
+                                                    Toast.makeText(WaitingSession.this, friend_view.getText().toString().trim() + " has been invited", Toast.LENGTH_LONG).show();
+                                                }
+                                            });
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+
+                                        }
+                                    });
+                                }
+                            });
+                            friends = friends.next;
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
