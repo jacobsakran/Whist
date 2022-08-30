@@ -14,6 +14,17 @@ public class Node {
         this.next = null;
     }
 
+    public Object findByValue(Object obj) {
+        Node iterator = this;
+        while (iterator != null) {
+            if (iterator.obj == null) break;
+            if (iterator.obj.equals(obj)) return iterator.obj;
+            iterator = iterator.next;
+        }
+
+        return null;
+    }
+
     public Object findByIndex(int index) {
         Node iterator = this;
         int counter = 0;

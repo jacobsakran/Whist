@@ -248,9 +248,15 @@ public class InGame extends AppCompatActivity {
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 User user2 = snapshot.getValue(User.class);
                                 if (user2.requested == null) user2.requested = new Node();
-                                user2.requested.addValue(Profile.user.uid);
-                                FirebaseDatabase.getInstance().getReference("Users").child(player2.uid)
-                                        .child("requested").setValue(user2.requested);
+                                if (user2.requested.findByValue(Profile.user.uid) == null) {
+                                    user2.requested.addValue(Profile.user.uid);
+                                    FirebaseDatabase.getInstance().getReference("Users").child(player2.uid)
+                                            .child("requested").setValue(user2.requested);
+                                    addFriend.setText("Friend Request sent");
+                                } else {
+                                    addFriend.setText("You already sent a Friend Request");
+                                }
+                                addFriend.setClickable(false);
                             }
 
                             @Override
@@ -258,10 +264,6 @@ public class InGame extends AppCompatActivity {
 
                             }
                         });
-                        addFriend.setClickable(false);
-                        addFriend.setText("Friend Request sent");
-                        //Todo send a friend request
-
                     }
                 });
                 playerCardExit.setOnClickListener(new View.OnClickListener() {
@@ -319,12 +321,16 @@ public class InGame extends AppCompatActivity {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 User user2 = snapshot.getValue(User.class);
-                                if (user2 == null) {
-                                    Toast.makeText(InGame.this, "something went wrong", Toast.LENGTH_LONG).show();
+                                if (user2.requested == null) user2.requested = new Node();
+                                if (user2.requested.findByValue(Profile.user.uid) == null) {
+                                    user2.requested.addValue(Profile.user.uid);
+                                    FirebaseDatabase.getInstance().getReference("Users").child(player3.uid)
+                                            .child("requested").setValue(user2.requested);
+                                    addFriend.setText("Friend Request sent");
+                                } else {
+                                    addFriend.setText("You already sent a Friend Request");
                                 }
-                                user2.requested.addValue(Profile.user.uid);
-                                FirebaseDatabase.getInstance().getReference("Users").child(player3.uid)
-                                        .child("requested").setValue(user2.requested);
+                                addFriend.setClickable(false);
                             }
 
                             @Override
@@ -332,10 +338,6 @@ public class InGame extends AppCompatActivity {
 
                             }
                         });
-                        addFriend.setClickable(false);
-                        addFriend.setText("Friend Request sent");
-                        //Todo send a friend request
-
                     }
                 });
                 playerCardExit.setOnClickListener(new View.OnClickListener() {
@@ -397,9 +399,16 @@ public class InGame extends AppCompatActivity {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 User user2 = snapshot.getValue(User.class);
-                                user2.requested.addValue(Profile.user.uid);
-                                FirebaseDatabase.getInstance().getReference("Users").child(player4.uid)
-                                        .child("requested").setValue(user2.requested);
+                                if (user2.requested == null) user2.requested = new Node();
+                                if (user2.requested.findByValue(Profile.user.uid) == null) {
+                                    user2.requested.addValue(Profile.user.uid);
+                                    FirebaseDatabase.getInstance().getReference("Users").child(player4.uid)
+                                            .child("requested").setValue(user2.requested);
+                                    addFriend.setText("Friend Request sent");
+                                } else {
+                                    addFriend.setText("You already sent a Friend Request");
+                                }
+                                addFriend.setClickable(false);
                             }
 
                             @Override
@@ -407,10 +416,6 @@ public class InGame extends AppCompatActivity {
 
                             }
                         });
-                        addFriend.setClickable(false);
-                        addFriend.setText("Friend Request sent");
-                        //Todo send a friend request
-
                     }
                 });
                 playerCardExit.setOnClickListener(new View.OnClickListener() {

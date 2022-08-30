@@ -32,7 +32,7 @@ public class Profile extends AppCompatActivity {
     private Button log_out_button;
     private Button timer_button, requestsProfileButton, back;
     private TextView profile_rank_text, profile_budget_text , numOfRequestes;
-    private ScrollView requestLayout;
+    private LinearLayout requestLayout;
     private ImageView star, coin;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +52,7 @@ public class Profile extends AppCompatActivity {
         profile_rank_text = (TextView) findViewById(R.id.profile_rank);
         timer_button = (Button) findViewById(R.id.timerButton);
         requestsProfileButton = (Button) findViewById(R.id.requestsProfile);
-        requestLayout = (ScrollView) findViewById(R.id.requestLayoutProfile);
+        requestLayout = (LinearLayout) findViewById(R.id.requestLayoutProfile);
         requestLayout.setVisibility(View.INVISIBLE);
 
         requestsProfileButton.setOnClickListener(new View.OnClickListener()
@@ -174,57 +174,52 @@ public class Profile extends AppCompatActivity {
         play_button.setVisibility(View.INVISIBLE);
         requestsProfileButton.setVisibility(View.INVISIBLE);
         back.setVisibility(View.VISIBLE);
+        if (user.requested == null) user.requested = new Node();
         Node friendRequests = user.requested;
         requestLayout.removeAllViews();
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        requestLayout.setLayoutParams(layoutParams);
 
-        LinearLayout linearLayout = new LinearLayout(this);
-        LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        linearLayout.setOrientation(LinearLayout.VERTICAL);
-        linearLayout.setLayoutParams(linearParams);
+        while (friendRequests != null && friendRequests.obj != null){
+            Toast.makeText(Profile.this, "olala1", Toast.LENGTH_LONG).show();
 
-        requestLayout.addView(linearLayout);
-        //Toast.makeText(Profile.this, (String)friendRequests.obj, Toast.LENGTH_LONG).show();
-
-        while (friendRequests != null){
 
             String uid = (String) friendRequests.obj;
-            FirebaseDatabase.getInstance().getReference("Users").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    User requestedUser = snapshot.getValue(User.class);
-                    assert requestedUser != null;
-                    TextView text = new TextView(Profile.this);
-                    text.setTextSize(20);
-                    //text.setHint((String) game.game_name);
-                    String text_to_show = "Add " + (String) requestedUser.username;
-                    text.setText(text_to_show);
-                    text.setTextColor(Color.BLACK);
-                    linearLayout.addView(text);
-                    //Toast.makeText(Profile.this, text_to_show, Toast.LENGTH_LONG).show();
 
-                    text.setOnClickListener(new View.OnClickListener() {
+            TextView text = new TextView(Profile.this);
+            text.setTextSize(20);
+            //text.setHint((String) game.game_name);
+            String text_to_show = "Add " + (String) uid;
+            text.setText(text_to_show);
+            text.setTextColor(Color.BLACK);
+            requestLayout.addView(text);
+            Toast.makeText(Profile.this, "olala", Toast.LENGTH_LONG).show();
+
+            text.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    FirebaseDatabase.getInstance().getReference("Users").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
-                        public void onClick(View view) {
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            User requestedUser = snapshot.getValue(User.class);
+                            assert requestedUser != null;
                             if (requestedUser.friends == null) requestedUser.friends = new Node();
+                            if (user.friends == null) user.friends = new Node();
                             requestedUser.friends.addValue(uid);
                             FirebaseDatabase.getInstance().getReference("Users").child(uid)
                                     .child("friends").setValue(requestedUser.friends);
-
                             if (user.friends == null) user.friends = new Node();
                             user.friends.addValue(requestedUser.uid);
                             FirebaseDatabase.getInstance().getReference("Users").child(user.uid)
                                     .child("friends").setValue(user.friends);
-                            // TODO remove from requested
+                            user.requested.removeByValue(uid);
+                            FirebaseDatabase.getInstance().getReference("Users").child(user.uid)
+                                    .child("friends").setValue(user.requested);
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
                         }
                     });
-
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
                 }
             });
             friendRequests = friendRequests.next;
