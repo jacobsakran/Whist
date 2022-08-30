@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,10 +30,10 @@ import java.util.HashMap;
 import java.util.Vector;
 
 public class HomePage extends AppCompatActivity implements View.OnClickListener {
-    private Button log_out, create_game, refresh, back;
+    private Button create_game, refresh, back;
     private DatabaseReference reference;
-    private ProgressBar progress_bar;
     private LinearLayout layout;
+    private LinearLayout invites;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,14 +43,11 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
         } catch (NullPointerException e) {
         }
         setContentView(R.layout.activity_home_page);
-        progress_bar = (ProgressBar) findViewById(R.id.homePageProgressBar);
         layout = (LinearLayout) findViewById(R.id.homePageLinearLayout);
+        invites = (LinearLayout) findViewById(R.id.scrollViewLayout);
 
         refresh = (Button) findViewById(R.id.homePageRefreshButton);
         refresh.setOnClickListener(this);
-
-        log_out = (Button) findViewById(R.id.logOutButton);
-        log_out.setOnClickListener(this);
 
         create_game = (Button) findViewById(R.id.createGameButton);
         create_game.setOnClickListener(this);
@@ -64,9 +62,6 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
         if (!Profile.user.current_game_id.equals("")) ForwardUserToCurrentGame();
 
         switch (view.getId()) {
-            case R.id.logOutButton:
-                logOut();
-                break;
             case R.id.createGameButton:
                 startActivity(new Intent(HomePage.this, CreateGame.class));
                 break;
@@ -155,6 +150,75 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
 
             }
         });
+
+        FirebaseDatabase.getInstance().getReference("invites").child(Profile.user.uid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                invites.removeAllViews();
+                for (DataSnapshot child : snapshot.getChildren()) {
+                    GameState game = child.getValue(GameState.class);
+                    TextView text = new TextView(HomePage.this);
+                    text.setTextSize(20);
+                    text.setText("join " + child.getKey());
+                    text.setTextColor(Color.WHITE);
+                    invites.addView(text);
+                    text.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if (!Profile.user.current_game_id.equals("")) {
+                                String msg = "You are already in this game, exit to join a new one";
+                                Toast.makeText(HomePage.this, msg, Toast.LENGTH_LONG).show();
+                                ForwardUserToCurrentGame();
+                                return;
+                            }
+
+                            if (game.game_money > Profile.user.money) {
+                                String msg = "You can not afford this game.";
+                                Toast.makeText(HomePage.this, msg, Toast.LENGTH_LONG).show();
+                                return;
+                            }
+
+                            //String game_name = ((TextView) view).getHint().toString().trim();
+                            Profile.user.current_game_id = game.game_name;
+                            //user.money -= game.game_money;
+                            FirebaseDatabase.getInstance().getReference("WaitingSessions").child(game.game_name)
+                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            GameState game = snapshot.getValue(GameState.class);
+                                            if (game == null) {
+                                                Toast.makeText(HomePage.this, "The game is unavailable, refresh for better options", Toast.LENGTH_LONG).show();
+                                                return;
+                                            }
+                                            game.addPlayer(new Player(Profile.user.uid, Profile.user.username, Profile.user.money, Profile.user.rank));
+                                            FirebaseDatabase.getInstance().getReference("WaitingSessions").child(Profile.user.current_game_id)
+                                                    .setValue(game).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<Void> task) {
+                                                            if (task.isSuccessful()) {
+                                                                FirebaseDatabase.getInstance().getReference("Users")
+                                                                        .child(Profile.user.uid).child("current_game_id").setValue(Profile.user.current_game_id);
+                                                                startActivity(new Intent(HomePage.this, WaitingSession.class));
+                                                            }
+                                                        }
+                                                    });
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+
+                                        }
+                                    });
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     private void ForwardUserToCurrentGame() {
@@ -193,9 +257,7 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
     }
 
     private void viewHomePage() {
-        progress_bar.setVisibility(View.VISIBLE);
         refresh.setVisibility(View.INVISIBLE);
-        log_out.setVisibility(View.INVISIBLE);
         create_game.setVisibility(View.INVISIBLE);
 
         FirebaseUser firebase_user = FirebaseAuth.getInstance().getCurrentUser();
@@ -207,9 +269,7 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (Profile.user != null) {
-                    progress_bar.setVisibility(View.INVISIBLE);
                     create_game.setVisibility(View.VISIBLE);
-                    log_out.setVisibility(View.VISIBLE);
                     refresh.setVisibility(View.VISIBLE);
 
                     if (!Profile.user.current_game_id.equals("")) ForwardUserToCurrentGame();

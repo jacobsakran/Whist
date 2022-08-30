@@ -78,6 +78,7 @@ public class InGame extends AppCompatActivity {
     private GameState game = null;
     private CountDownTimer timer = null;
     private int counter = 0;
+    private DataSnapshot disconnected_users = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -790,6 +791,7 @@ public class InGame extends AppCompatActivity {
 
                         Node card_iterator = null;
                         int index = 0;
+                        if (!isLegalToContinue()) return;
 
 
                         myUserName.setText(((Player) iterator.obj).userName);
@@ -805,6 +807,7 @@ public class InGame extends AppCompatActivity {
                         iterator = iterator.next;
                         if (iterator == null) iterator = players;
 
+                        if (!isLegalToContinue()) return;
 
                         index = 0;
                         userName2.setText(((Player) iterator.obj).userName);
@@ -822,6 +825,7 @@ public class InGame extends AppCompatActivity {
                         iterator = iterator.next;
                         if (iterator == null) iterator = players;
 
+                        if (!isLegalToContinue()) return;
 
                         if (!((Player)iterator.obj).uid.equals(Profile.user.uid)) {
                             if (((Player) iterator.obj).uid.equals("")) {
@@ -845,6 +849,7 @@ public class InGame extends AppCompatActivity {
                             userName3.setClickable(false);
                         }
 
+                        if (!isLegalToContinue()) return;
 
                         if (!((Player)iterator.obj).uid.equals(Profile.user.uid)) {
                             if (((Player) iterator.obj).uid.equals("")) {
@@ -865,6 +870,7 @@ public class InGame extends AppCompatActivity {
                             userName4.setClickable(false);
                         }
 
+                        if (!isLegalToContinue()) return;
 
                         if (current_player.uid.equals(Profile.user.uid)) {
                             hit.setClickable(true);
