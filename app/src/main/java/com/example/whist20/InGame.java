@@ -66,6 +66,7 @@ public class InGame extends AppCompatActivity {
     private TextView playerCardBudget;
     private TextView playerCardView;
     private TextView playerCardUsername;
+    private TextView inGameRating;
     private Button hit;
     private Button miss;
     private Button exit;
@@ -120,6 +121,7 @@ public class InGame extends AppCompatActivity {
         this.userName2 = (TextView) findViewById(R.id.playerUsername2);
         this.userName3 = (TextView) findViewById(R.id.playerUsername3);
         this.userName4 = (TextView) findViewById(R.id.playerUsername4);
+        this.inGameRating = (TextView) findViewById(R.id.inGameRating);
 
         this.myUserName.setClickable(false);
         this.userName2.setClickable(true);
@@ -161,15 +163,16 @@ public class InGame extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 DataSnapshot disconnected_snapshot = snapshot;
                 disconnected_users = snapshot;
-                FirebaseDatabase.getInstance().getReference("ActiveGames").child(game_name).addListenerForSingleValueEvent(new ValueEventListener() {
+                FirebaseDatabase.getInstance().getReference("ActiveGames").child(game_name).runTransaction(new Transaction.Handler() {
+                    @NonNull
                     @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        GameState tmp = GameState.convertSnapshotToGameState(snapshot);
+                    public Transaction.Result doTransaction(@NonNull MutableData currentData) {
+                        GameState tmp = GameState.convertMutableDataToGameState(currentData);
                         assert tmp != null;
-                        if (!disconnected_snapshot.hasChild(tmp.currentPlayerTurn().uid) && tmp.num_of_ready_players == tmp.numOfPlayers) return;
+                        if (!disconnected_snapshot.hasChild(tmp.currentPlayerTurn().uid) && tmp.num_of_ready_players == tmp.numOfPlayers) return null;
                         while (disconnected_snapshot.hasChild(tmp.currentPlayerTurn().uid)) tmp.nextPlayerTurn();
 
-                        if (!tmp.currentPlayerTurn().uid.equals(Profile.user.uid)) return;
+                        if (!tmp.currentPlayerTurn().uid.equals(Profile.user.uid)) return null;
                         if (tmp.num_of_ready_players < tmp.numOfPlayers) {
 
                             Node iterator = tmp.players.head;
@@ -184,11 +187,12 @@ public class InGame extends AppCompatActivity {
                             tmp.currentPlayer = tmp.players.head.next;
                         }
 
-                        FirebaseDatabase.getInstance().getReference("ActiveGames").child(game_name).setValue(tmp);
+                        currentData.setValue(tmp);
+                        return Transaction.success(currentData);
                     }
 
                     @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
+                    public void onComplete(@Nullable DatabaseError error, boolean committed, @Nullable DataSnapshot currentData) {
 
                     }
                 });
@@ -557,75 +561,71 @@ public class InGame extends AppCompatActivity {
     }
 
     private void dealerPlay() {
-        Dealer dealer = (Dealer) game.players.head.obj;
-        game.currentPlayer = game.players.head.next;
-        if (disconnected_users.exists()) {
-            //Toast.makeText(InGame.this, "WTF " + game.currentPlayerTurn().userName, Toast.LENGTH_LONG).show();
-            while (disconnected_users.hasChild(game.currentPlayerTurn().uid)) game.nextPlayerTurn();
-        }
+        GameState tmp_game = game;
+        Dealer dealer = (Dealer) tmp_game.players.head.obj;
+        tmp_game.currentPlayer = tmp_game.players.head.next;
+        if (disconnected_users.exists()) while (disconnected_users.hasChild(tmp_game.currentPlayerTurn().uid)) tmp_game.nextPlayerTurn();
 
         if (dealer.cards.cards.size < 2) {
-            if (!game.currentPlayerTurn().uid.equals(Profile.user.uid)) return;
-            counter++;
-            if (counter >= 3) {
-                Toast.makeText(InGame.this, counter + " woho " + game.currentPlayerTurn().userName, Toast.LENGTH_LONG).show();
-            }
+            if (!tmp_game.currentPlayerTurn().uid.equals(Profile.user.uid)) return;
 
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            dealer.cards.addCard(game.dict.randomCard());
-            game.is_active = true;
-
-            FirebaseDatabase.getInstance().getReference("ActiveGames").child(Profile.user.current_game_id).setValue(game);
+            dealer.cards.addCard(tmp_game.dict.randomCard());
+            tmp_game.is_active = true;
+            FirebaseDatabase.getInstance().getReference("ActiveGames").child(Profile.user.current_game_id).setValue(tmp_game);
             return;
         }
 
-        if (!game.is_active) {
-            if (!game.currentPlayerTurn().uid.equals(Profile.user.uid)) return;
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            Node iterator = game.players.head;
+        if (!tmp_game.is_active) {
+            if (!tmp_game.currentPlayerTurn().uid.equals(Profile.user.uid)) return;
+            timer.cancel();
+            turn.setText("");
+            Node iterator = tmp_game.players.head;
             while (iterator != null) {
                 if (disconnected_users.hasChild(((Player) iterator.obj).uid) && !((Player) iterator.obj).uid.equals("")) {
-                    game.removePlayerByUid(((Player) iterator.obj).uid);
-                    iterator = game.players.head;
+                    tmp_game.removePlayerByUid(((Player) iterator.obj).uid);
+                    iterator = tmp_game.players.head;
                 }
                 iterator = iterator.next;
             }
-            game.restartGame();
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            FirebaseDatabase.getInstance().getReference("ActiveGames").child(Profile.user.current_game_id).setValue(game);
+            FirebaseDatabase.getInstance().getReference("ActiveGames").child(Profile.user.current_game_id).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    game = GameState.convertSnapshotToGameState(snapshot);
+                    showCards();
+                    timer.cancel();
+                    turn.setText("");
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    tmp_game.restartGame();
+                    FirebaseDatabase.getInstance().getReference("ActiveGames").child(Profile.user.current_game_id).setValue(tmp_game);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
         } else {
-            dealer.openNewCard(game);
-            Player player = game.findPlayerByUid(Profile.user.uid);
-            int money_val = game.game_money * 2;
+            dealer.openNewCard(tmp_game);
+            Player player = tmp_game.findPlayerByUid(Profile.user.uid);
+            int money_val = tmp_game.game_money * 2;
             if (player.isDouble) money_val *= 2;
             if (dealer.cards.sum() > player.cards.sum() || player.cards.sum() == -1)
                 Toast.makeText(InGame.this, "You Lost the Bet", Toast.LENGTH_SHORT).show();
             else Toast.makeText(InGame.this, "You won the bet +" + String.valueOf(money_val), Toast.LENGTH_SHORT).show();
-            if (!game.currentPlayerTurn().uid.equals(Profile.user.uid)) return;
-            game.is_active = false;
-            game.currentPlayer = game.players.head;
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            FirebaseDatabase.getInstance().getReference("ActiveGames").child(Profile.user.current_game_id).setValue(game);
+            if (!tmp_game.currentPlayerTurn().uid.equals(Profile.user.uid)) return;
+            tmp_game.is_active = false;
+            tmp_game.currentPlayer = tmp_game.players.head;
+            FirebaseDatabase.getInstance().getReference("ActiveGames").child(Profile.user.current_game_id).setValue(tmp_game);
         }
-
-
     }
 
     private void notFoundCase() {
@@ -698,6 +698,7 @@ public class InGame extends AppCompatActivity {
 
     private boolean isLegalToContinue() {
         budget.setText("Budget: " + String.valueOf(Profile.user.money));
+        inGameRating.setText("Rank: " + String.valueOf(Profile.user.rank));
         turn.setText("");
         bettingValue.setText("Bet: " + String.valueOf(game.game_money));
         Player player = game.findPlayerByUid(Profile.user.uid);
@@ -728,6 +729,93 @@ public class InGame extends AppCompatActivity {
         return true;
     }
 
+    private void showCards() {
+        Node players = game.players.head;
+        Node iterator = players;
+        Player current_player = ((Player) game.currentPlayer.obj);
+
+        while (iterator != null) {
+            String uid = ((Player) iterator.obj).uid;
+            if (uid.equals(Profile.user.uid)) break;
+            iterator = iterator.next;
+        }
+
+        Node card_iterator = null;
+        int index = 0;
+
+
+        myUserName.setText(((Player) iterator.obj).userName);
+        myUserName.setClickable(false);
+        card_iterator = ((Player) iterator.obj).cards.cards.head;
+        while (card_iterator != null) {
+            Card card = (Card) card_iterator.obj;
+            if (card == null) break;
+            player1_cards[index].setImageResource(convertCardToImage(card));
+            card_iterator = card_iterator.next;
+            index++;
+        }
+        iterator = iterator.next;
+        if (iterator == null) iterator = players;
+
+
+        index = 0;
+        userName2.setText(((Player) iterator.obj).userName);
+        if (((Player) iterator.obj).uid.equals("")) {
+            userName2.setClickable(false);
+        }
+        card_iterator = ((Player) iterator.obj).cards.cards.head;
+        while (card_iterator != null) {
+            Card card = (Card) card_iterator.obj;
+            if (card == null) break;
+            player2_cards[index].setImageResource(convertCardToImage(card));
+            card_iterator = card_iterator.next;
+            index++;
+        }
+        iterator = iterator.next;
+        if (iterator == null) iterator = players;
+
+        if (!((Player)iterator.obj).uid.equals(Profile.user.uid)) {
+            if (((Player) iterator.obj).uid.equals("")) {
+                userName3.setClickable(false);
+            }
+            index = 0;
+            userName3.setText(((Player) iterator.obj).userName);
+            card_iterator = ((Player) iterator.obj).cards.cards.head;
+            while (card_iterator != null) {
+                Card card = (Card) card_iterator.obj;
+                if (card == null) break;
+                player3_cards[index].setImageResource(convertCardToImage(card));
+                card_iterator = card_iterator.next;
+                index++;
+            }
+            iterator = iterator.next;
+            if (iterator == null) iterator = players;
+        }
+        else{
+            //userName3.setVisibility(View.un)
+            userName3.setClickable(false);
+        }
+
+        if (!((Player)iterator.obj).uid.equals(Profile.user.uid)) {
+            if (((Player) iterator.obj).uid.equals("")) {
+                userName4.setClickable(false);
+            }
+            index = 0;
+            userName4.setText(((Player) iterator.obj).userName);
+            card_iterator = ((Player) iterator.obj).cards.cards.head;
+            while (card_iterator != null) {
+                Card card = (Card) card_iterator.obj;
+                if (card == null) break;
+                player4_cards[index].setImageResource(convertCardToImage(card));
+                card_iterator = card_iterator.next;
+                index++;
+            }
+        }
+        else{
+            userName4.setClickable(false);
+        }
+    }
+
     private void showPage() {
         String game_name = Profile.user.current_game_id;
         FirebaseDatabase.getInstance().getReference("ActiveGames").child(game_name).addValueEventListener(new ValueEventListener() {
@@ -750,106 +838,11 @@ public class InGame extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (timer != null) timer.cancel();
                         Profile.user = snapshot.getValue(User.class);
-                        if (counter == 2) {
-                            int x = 0;
-                        }
                         if (!isLegalToContinue()) return;
-
-
-
-                        Node players = game.players.head;
-                        Node iterator = players;
                         Player current_player = ((Player) game.currentPlayer.obj);
 
-                        while (iterator != null) {
-                            String uid = ((Player) iterator.obj).uid;
-                            if (uid.equals(Profile.user.uid)) break;
-                            iterator = iterator.next;
-                        }
 
-                        Node card_iterator = null;
-                        int index = 0;
-                        if (!isLegalToContinue()) return;
-
-
-                        myUserName.setText(((Player) iterator.obj).userName);
-                        myUserName.setClickable(false);
-                        card_iterator = ((Player) iterator.obj).cards.cards.head;
-                        while (card_iterator != null) {
-                            Card card = (Card) card_iterator.obj;
-                            if (card == null) break;
-                            player1_cards[index].setImageResource(convertCardToImage(card));
-                            card_iterator = card_iterator.next;
-                            index++;
-                        }
-                        iterator = iterator.next;
-                        if (iterator == null) iterator = players;
-
-                        if (!isLegalToContinue()) return;
-
-                        index = 0;
-                        userName2.setText(((Player) iterator.obj).userName);
-                        if (((Player) iterator.obj).uid.equals("")) {
-                            userName2.setClickable(false);
-                        }
-                        card_iterator = ((Player) iterator.obj).cards.cards.head;
-                        while (card_iterator != null) {
-                            Card card = (Card) card_iterator.obj;
-                            if (card == null) break;
-                            player2_cards[index].setImageResource(convertCardToImage(card));
-                            card_iterator = card_iterator.next;
-                            index++;
-                        }
-                        iterator = iterator.next;
-                        if (iterator == null) iterator = players;
-
-                        if (!isLegalToContinue()) return;
-
-                        if (!((Player)iterator.obj).uid.equals(Profile.user.uid)) {
-                            if (((Player) iterator.obj).uid.equals("")) {
-                                userName3.setClickable(false);
-                            }
-                            index = 0;
-                            userName3.setText(((Player) iterator.obj).userName);
-                            card_iterator = ((Player) iterator.obj).cards.cards.head;
-                            while (card_iterator != null) {
-                                Card card = (Card) card_iterator.obj;
-                                if (card == null) break;
-                                player3_cards[index].setImageResource(convertCardToImage(card));
-                                card_iterator = card_iterator.next;
-                                index++;
-                            }
-                            iterator = iterator.next;
-                            if (iterator == null) iterator = players;
-                        }
-                        else{
-                            //userName3.setVisibility(View.un)
-                            userName3.setClickable(false);
-                        }
-
-                        if (!isLegalToContinue()) return;
-
-                        if (!((Player)iterator.obj).uid.equals(Profile.user.uid)) {
-                            if (((Player) iterator.obj).uid.equals("")) {
-                                userName4.setClickable(false);
-                            }
-                            index = 0;
-                            userName4.setText(((Player) iterator.obj).userName);
-                            card_iterator = ((Player) iterator.obj).cards.cards.head;
-                            while (card_iterator != null) {
-                                Card card = (Card) card_iterator.obj;
-                                if (card == null) break;
-                                player4_cards[index].setImageResource(convertCardToImage(card));
-                                card_iterator = card_iterator.next;
-                                index++;
-                            }
-                        }
-                        else{
-                            userName4.setClickable(false);
-                        }
-
-                        if (!isLegalToContinue()) return;
-
+                        showCards();
                         if (current_player.uid.equals(Profile.user.uid)) {
                             hit.setClickable(true);
                             miss.setClickable(true);
@@ -868,6 +861,37 @@ public class InGame extends AppCompatActivity {
                                 if (current_player.cards.cards.size == 1) {
                                     noDoubleButton.setVisibility(View.VISIBLE);
                                     doubleButton.setVisibility(View.VISIBLE);
+                                    hit.setClickable(false);
+                                    miss.setClickable(false);
+                                    timer = new CountDownTimer(10000, 1000) {
+
+                                        public void onTick(long millisUntilFinished) {
+                                            turn.setText("Your Turn - " + (millisUntilFinished / 1000));
+                                        }
+
+                                        public void onFinish() {
+                                            current_player.openNewCard(game);
+                                            game.nextPlayerTurn();
+                                            if (disconnected_users.exists())
+                                                while (disconnected_users.hasChild(game.currentPlayerTurn().uid) && !game.currentPlayerTurn().uid.equals(""))
+                                                    game.nextPlayerTurn();
+                                            noDoubleButton.setVisibility(View.INVISIBLE);
+                                            doubleButton.setVisibility(View.INVISIBLE);
+
+                                            FirebaseDatabase.getInstance().getReference("ActiveGames").child(Profile.user.current_game_id)
+                                                    .setValue(game).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<Void> task) {
+                                                            if (!task.isSuccessful())
+                                                                Toast.makeText(InGame.this, "Failed to update game on FireBase", Toast.LENGTH_LONG).show();
+                                                            else Toast.makeText(InGame.this, "Time is up", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    });
+
+
+                                        }
+                                    }.start();
+                                    turn.setText("Your Turn - 10s");
                                     View.OnClickListener tmp = new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
@@ -930,7 +954,6 @@ public class InGame extends AppCompatActivity {
                                     }
 
                                     public void onFinish() {
-
                                         game.nextPlayerTurn();
                                         if (disconnected_users.exists())
                                             while (disconnected_users.hasChild(game.currentPlayerTurn().uid) && !game.currentPlayerTurn().uid.equals(""))
@@ -955,9 +978,6 @@ public class InGame extends AppCompatActivity {
                             hit.setClickable(false);
                             miss.setClickable(false);
                             turn.setText("");
-                            if (counter == 2) {
-                                Toast.makeText(InGame.this, "Time is up", Toast.LENGTH_SHORT);
-                            }
                             if (current_player.uid.equals("")) dealerPlay(); // the current player is the dealer
                         }
                     }

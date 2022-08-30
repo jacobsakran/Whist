@@ -83,6 +83,8 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                 layout.removeAllViews();
                 for (DataSnapshot child : snapshot.getChildren()) {
                     GameState game = child.getValue(GameState.class);
+                    if (game.is_private) continue;
+
                     assert game != null;
 
                     TextView text = new TextView(HomePage.this);
@@ -157,6 +159,7 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                 invites.removeAllViews();
                 for (DataSnapshot child : snapshot.getChildren()) {
                     GameState game = child.getValue(GameState.class);
+
                     TextView text = new TextView(HomePage.this);
                     text.setTextSize(20);
                     text.setText("join " + child.getKey());

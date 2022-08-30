@@ -20,6 +20,7 @@ public class GameState {
     public int maxPlayersNum;
     public Dict dict;
     public boolean first_open;
+    public boolean is_private;
     public int num_of_ready_players;
     public int game_money;
 
@@ -32,6 +33,7 @@ public class GameState {
         this.numOfPlayers = 0;
         this.maxPlayersNum = 4;
         this.is_active = false;
+        this.is_private = false;
         this.num_of_ready_players = 0;
         this.game_name = game_name;
         this.dict = new Dict();

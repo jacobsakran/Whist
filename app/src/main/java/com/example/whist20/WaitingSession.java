@@ -61,6 +61,7 @@ public class WaitingSession extends AppCompatActivity {
 
         scrollViewInvites.setVisibility(View.INVISIBLE);
         background = findViewById(R.id.waitingSessionBackground);
+        FirebaseDatabase.getInstance().getReference("WaitingSessions").child(Profile.user.current_game_id).onDisconnect().setValue(null);
 
         invite.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -603,4 +603,19 @@
         app:layout_constraintStart_toEndOf="@+id/doubleButton"
         app:layout_constraintTop_toBottomOf="@+id/card7" />
 
+    <TextView
+        android:id="@+id/inGameRating"
+        android:layout_width="150dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="127dp"
+        android:layout_marginTop="43dp"
+        android:layout_marginEnd="134dp"
+        android:text="TextView"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/bettingValueInGame"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
