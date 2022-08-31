@@ -50,7 +50,7 @@ public class top_players extends AppCompatActivity {
                     User friend = snapshot.getValue(User.class);
                     assert friend != null;
                     if (first != null) {
-
+                        
                     }
                 }
                 @Override
@@ -71,7 +71,6 @@ public class top_players extends AppCompatActivity {
         }
         if (Objects.equals(user.uid, third.uid)) {
             Toast.makeText(top_players.this, "congrats you got the third place!", Toast.LENGTH_LONG).show();
-
         }
 
     }
