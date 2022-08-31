@@ -144,5 +144,18 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@android:drawable/btn_star_big_on" />
 
+    <TextView
+        android:id="@+id/MyFriendRequestsText"
+        android:layout_width="416dp"
+        android:layout_height="39dp"
+        android:layout_marginBottom="1dp"
+        android:background="#2196F3"
+        android:text="My Friend Requests"
+        android:textSize="29sp"
+        android:textStyle="italic"
+        app:layout_constraintBottom_toTopOf="@+id/requestLayoutProfile"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -31,7 +31,7 @@ public class Profile extends AppCompatActivity {
     private Button play_button;
     private Button log_out_button;
     private Button timer_button, requestsProfileButton, back;
-    private TextView profile_rank_text, profile_budget_text , numOfRequestes;
+    private TextView profile_rank_text, profile_budget_text , numOfRequestes, my_friend_requests_text;
     private LinearLayout requestLayout;
     private ImageView star, coin;
     @Override
@@ -48,12 +48,14 @@ public class Profile extends AppCompatActivity {
         back = (Button) findViewById(R.id.back_profile);
         log_out_button = (Button) findViewById(R.id.log_out_profile);
         profile_budget_text = (TextView) findViewById(R.id.profile_money);
+        my_friend_requests_text = (TextView) findViewById(R.id.MyFriendRequestsText);
         numOfRequestes = (TextView) findViewById(R.id.numOfRequestes);
         profile_rank_text = (TextView) findViewById(R.id.profile_rank);
         timer_button = (Button) findViewById(R.id.timerButton);
         requestsProfileButton = (Button) findViewById(R.id.requestsProfile);
         requestLayout = (LinearLayout) findViewById(R.id.requestLayoutProfile);
         requestLayout.setVisibility(View.INVISIBLE);
+        my_friend_requests_text.setVisibility(View.INVISIBLE);
 
         requestsProfileButton.setOnClickListener(new View.OnClickListener()
         {
@@ -126,6 +128,7 @@ public class Profile extends AppCompatActivity {
         back.setVisibility(View.INVISIBLE);
         requestsProfileButton.setVisibility(View.INVISIBLE);
         numOfRequestes.setVisibility(View.INVISIBLE);
+        my_friend_requests_text.setVisibility(View.INVISIBLE);
         FirebaseUser firebase_user = FirebaseAuth.getInstance().getCurrentUser();
         assert firebase_user != null;
         String id = firebase_user.getUid();
@@ -166,6 +169,7 @@ public class Profile extends AppCompatActivity {
 
 
     private void viewFriendsRequests() {
+        my_friend_requests_text.setVisibility(View.VISIBLE);
         requestLayout.setVisibility(View.VISIBLE);
         timer_button.setVisibility(View.INVISIBLE);
         log_out_button.setVisibility(View.INVISIBLE);
@@ -179,40 +183,35 @@ public class Profile extends AppCompatActivity {
         requestLayout.removeAllViews();
 
         while (friendRequests != null && friendRequests.obj != null){
-            Toast.makeText(Profile.this, "olala1", Toast.LENGTH_LONG).show();
-
-
-            String uid = (String) friendRequests.obj;
-
+            String uid = (String)friendRequests.obj;
             TextView text = new TextView(Profile.this);
             text.setTextSize(20);
             //text.setHint((String) game.game_name);
-            String text_to_show = "Add " + (String) uid;
+            String text_to_show = "Click to add " + (String) uid;
             text.setText(text_to_show);
             text.setTextColor(Color.BLACK);
             requestLayout.addView(text);
-            Toast.makeText(Profile.this, "olala", Toast.LENGTH_LONG).show();
-
+            Node finalFriendRequests = friendRequests;
             text.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    FirebaseDatabase.getInstance().getReference("Users").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                    FirebaseDatabase.getInstance().getReference("Users").child((String) finalFriendRequests.obj).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             User requestedUser = snapshot.getValue(User.class);
                             assert requestedUser != null;
                             if (requestedUser.friends == null) requestedUser.friends = new Node();
-                            if (user.friends == null) user.friends = new Node();
-                            requestedUser.friends.addValue(uid);
-                            FirebaseDatabase.getInstance().getReference("Users").child(uid)
+                            requestedUser.friends.addValue(user.uid);
+                            FirebaseDatabase.getInstance().getReference("Users").child(requestedUser.uid)
                                     .child("friends").setValue(requestedUser.friends);
                             if (user.friends == null) user.friends = new Node();
                             user.friends.addValue(requestedUser.uid);
                             FirebaseDatabase.getInstance().getReference("Users").child(user.uid)
                                     .child("friends").setValue(user.friends);
-                            user.requested.removeByValue(uid);
+                            user.requested = user.requested.removeByValue(requestedUser.uid);
                             FirebaseDatabase.getInstance().getReference("Users").child(user.uid)
-                                    .child("friends").setValue(user.requested);
+                                    .child("requested").setValue(user.requested);
+                            viewFriendsRequests();
                         }
 
                         @Override

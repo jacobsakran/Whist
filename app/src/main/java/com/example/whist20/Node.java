@@ -45,12 +45,12 @@ public class Node {
         iterator.next = new Node(obj);
     }
 
-    public void removeByValue(Object obj) {
+    public Node removeByValue(Object obj) {
         Node head = this;
-        if (head.obj.equals(obj)) {
+        if (this.obj.equals(obj)) {
             head = head.next;
             if (head == null) head = new Node();
-            return;
+            return head;
         }
         boolean tmp = false;
         Node iterator1 = head;
@@ -66,5 +66,6 @@ public class Node {
         if(tmp) {
             iterator1.next = iterator2.next;
         }
+        return head;
     }
 }
