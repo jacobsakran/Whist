@@ -30,7 +30,7 @@ public class Profile extends AppCompatActivity {
     public static User user = null;
     private Button play_button;
     private Button log_out_button;
-    private Button timer_button, requestsProfileButton, back;
+    private Button timer_button, requestsProfileButton, back, topPlayers;
     private TextView profile_rank_text, profile_budget_text , numOfRequestes, my_friend_requests_text;
     private LinearLayout requestLayout;
     private ImageView star, coin;
@@ -45,6 +45,7 @@ public class Profile extends AppCompatActivity {
         star = (ImageView) findViewById(R.id.star);
         coin = (ImageView) findViewById(R.id.coin);
         play_button = (Button) findViewById(R.id.Play);
+        topPlayers = (Button) findViewById(R.id.top_players);
         back = (Button) findViewById(R.id.back_profile);
         log_out_button = (Button) findViewById(R.id.log_out_profile);
         profile_budget_text = (TextView) findViewById(R.id.profile_money);
@@ -62,6 +63,13 @@ public class Profile extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 viewFriendsRequests();
+            }
+        });
+        topPlayers.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(Profile.this, top_players.class));
             }
         });
         back.setOnClickListener(new View.OnClickListener()
@@ -117,6 +125,7 @@ public class Profile extends AppCompatActivity {
     }
 
     private void viewProfilePage() {
+        topPlayers.setVisibility(View.INVISIBLE);
         star.setVisibility(View.INVISIBLE);
         coin.setVisibility(View.INVISIBLE);
         play_button.setVisibility(View.INVISIBLE);
@@ -146,6 +155,7 @@ public class Profile extends AppCompatActivity {
                     profile_budget_text.setVisibility(View.VISIBLE);
                     log_out_button.setVisibility(View.VISIBLE);
                     play_button.setVisibility(View.VISIBLE);
+                    topPlayers.setVisibility(View.VISIBLE);
                     timer_button.setVisibility(View.VISIBLE);
                     profile_rank_text.setText("Rank: "+ String.valueOf(user.rank));
                     profile_budget_text.setText("Budget: " + String.valueOf(user.money));
@@ -170,6 +180,7 @@ public class Profile extends AppCompatActivity {
 
     private void viewFriendsRequests() {
         my_friend_requests_text.setVisibility(View.VISIBLE);
+        topPlayers.setVisibility(View.INVISIBLE);
         requestLayout.setVisibility(View.VISIBLE);
         timer_button.setVisibility(View.INVISIBLE);
         log_out_button.setVisibility(View.INVISIBLE);
@@ -183,23 +194,22 @@ public class Profile extends AppCompatActivity {
         requestLayout.removeAllViews();
 
         while (friendRequests != null && friendRequests.obj != null){
-            String uid = (String)friendRequests.obj;
-            TextView text = new TextView(Profile.this);
-            text.setTextSize(20);
-            //text.setHint((String) game.game_name);
-            String text_to_show = "Click to add " + (String) uid;
-            text.setText(text_to_show);
-            text.setTextColor(Color.BLACK);
-            requestLayout.addView(text);
-            Node finalFriendRequests = friendRequests;
-            text.setOnClickListener(new View.OnClickListener() {
+            FirebaseDatabase.getInstance().getReference("Users").child((String) friendRequests.obj).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onClick(View view) {
-                    FirebaseDatabase.getInstance().getReference("Users").child((String) finalFriendRequests.obj).addListenerForSingleValueEvent(new ValueEventListener() {
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    User requestedUser = snapshot.getValue(User.class);
+                    assert requestedUser != null;
+                    String uid = (String) requestedUser.uid;
+                    TextView text = new TextView(Profile.this);
+                    text.setTextSize(20);
+                    //text.setHint((String) game.game_name);
+                    String text_to_show = "Click to add " + (String) requestedUser.username;
+                    text.setText(text_to_show);
+                    text.setTextColor(Color.BLACK);
+                    requestLayout.addView(text);
+                    text.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            User requestedUser = snapshot.getValue(User.class);
-                            assert requestedUser != null;
+                        public void onClick(View view) {
                             if (requestedUser.friends == null) requestedUser.friends = new Node();
                             requestedUser.friends.addValue(user.uid);
                             FirebaseDatabase.getInstance().getReference("Users").child(requestedUser.uid)
@@ -213,14 +223,13 @@ public class Profile extends AppCompatActivity {
                                     .child("requested").setValue(user.requested);
                             viewFriendsRequests();
                         }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-
-                        }
                     });
                 }
-            });
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
             friendRequests = friendRequests.next;
         }
     }
@@ -267,6 +276,4 @@ public class Profile extends AppCompatActivity {
         });
 
     }
-
-
 }

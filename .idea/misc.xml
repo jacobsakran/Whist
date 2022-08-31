@@ -21,10 +21,12 @@
         <entry key="..\:/Users/JacobSakran/Documents/GitHub/Whist/app/src/main/res/layout/activity_waiting_session.xml" value="0.18886612021857924" />
         <entry key="app/src/main/res/layout/activity_create_game.xml" value="0.11524822695035461" />
         <entry key="app/src/main/res/layout/activity_forgot_password.xml" value="0.11524822695035461" />
+        <entry key="app/src/main/res/layout/activity_fullscreen.xml" value="0.10092592592592593" />
         <entry key="app/src/main/res/layout/activity_home_page.xml" value="0.11574074074074074" />
         <entry key="app/src/main/res/layout/activity_in_game.xml" value="0.22327898550724637" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.11574074074074074" />
-        <entry key="app/src/main/res/layout/activity_profile.xml" value="0.2002716064453125" />
+        <entry key="app/src/main/res/layout/activity_profile.xml" value="0.23406443580149028" />
+        <entry key="app/src/main/res/layout/activity_top_players.xml" value="0.28538935550701655" />
         <entry key="app/src/main/res/layout/activity_waiting_session.xml" value="0.11574074074074074" />
       </map>
     </option>

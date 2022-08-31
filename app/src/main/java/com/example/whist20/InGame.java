@@ -248,8 +248,8 @@ public class InGame extends AppCompatActivity {
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 User user2 = snapshot.getValue(User.class);
                                 if (user2.requested == null) user2.requested = new Node();
-                                if (user2.requested.findByValue(Profile.user.username) == null) {
-                                    user2.requested.addValue(Profile.user.username);
+                                if (user2.requested.findByValue(Profile.user.uid) == null) {
+                                    user2.requested.addValue(Profile.user.uid);
                                     FirebaseDatabase.getInstance().getReference("Users").child(player2.uid)
                                             .child("requested").setValue(user2.requested);
                                     addFriend.setText("Friend Request sent");
@@ -322,8 +322,8 @@ public class InGame extends AppCompatActivity {
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 User user2 = snapshot.getValue(User.class);
                                 if (user2.requested == null) user2.requested = new Node();
-                                if (user2.requested.findByValue(Profile.user.username) == null) {
-                                    user2.requested.addValue(Profile.user.username);
+                                if (user2.requested.findByValue(Profile.user.uid) == null) {
+                                    user2.requested.addValue(Profile.user.uid);
                                     FirebaseDatabase.getInstance().getReference("Users").child(player3.uid)
                                             .child("requested").setValue(user2.requested);
                                     addFriend.setText("Friend Request sent");
@@ -400,8 +400,8 @@ public class InGame extends AppCompatActivity {
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 User user2 = snapshot.getValue(User.class);
                                 if (user2.requested == null) user2.requested = new Node();
-                                if (user2.requested.findByValue(Profile.user.username) == null) {
-                                    user2.requested.addValue(Profile.user.username);
+                                if (user2.requested.findByValue(Profile.user.uid) == null) {
+                                    user2.requested.addValue(Profile.user.uid);
                                     FirebaseDatabase.getInstance().getReference("Users").child(player4.uid)
                                             .child("requested").setValue(user2.requested);
                                     addFriend.setText("Friend Request sent");
