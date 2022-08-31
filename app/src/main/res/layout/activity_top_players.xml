@@ -23,11 +23,14 @@
         android:layout_height="60dp"
         android:layout_marginStart="81dp"
         android:layout_marginTop="130dp"
+        android:layout_marginEnd="80dp"
         android:text="First Place:"
         android:textColor="#EEE8F3"
         android:textColorHighlight="#191323"
         android:textSize="34sp"
         android:textStyle="italic"
+        app:layout_constraintBottom_toTopOf="@+id/firstPlayer"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -37,11 +40,15 @@
         android:layout_height="60dp"
         android:layout_marginStart="80dp"
         android:layout_marginTop="268dp"
+        android:layout_marginEnd="81dp"
+        android:layout_marginBottom="1dp"
         android:text="Second Place:"
         android:textColor="#EEE8F3"
         android:textColorHighlight="#191323"
         android:textSize="34sp"
         android:textStyle="italic"
+        app:layout_constraintBottom_toTopOf="@+id/secondPlayer"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -51,11 +58,14 @@
         android:layout_height="60dp"
         android:layout_marginStart="80dp"
         android:layout_marginTop="396dp"
+        android:layout_marginEnd="81dp"
         android:text="Third Place:"
         android:textColor="#EEE8F3"
         android:textColorHighlight="#191323"
         android:textSize="34sp"
         android:textStyle="italic"
+        app:layout_constraintBottom_toTopOf="@+id/thirdPlayer"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -72,26 +82,34 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/secondPlayer"
         android:layout_width="249dp"
         android:layout_height="63dp"
         android:layout_marginStart="80dp"
         android:layout_marginTop="329dp"
+        android:layout_marginEnd="82dp"
+        android:layout_marginBottom="4dp"
         android:text="TextView"
         android:textSize="24sp"
         android:textStyle="italic"
+        app:layout_constraintBottom_toTopOf="@+id/thirdPlaceText"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/thirdPlayer"
         android:layout_width="249dp"
         android:layout_height="59dp"
         android:layout_marginStart="81dp"
         android:layout_marginTop="456dp"
+        android:layout_marginEnd="81dp"
+        android:layout_marginBottom="147dp"
         android:text="TextView"
         android:textSize="24sp"
         android:textStyle="italic"
+        app:layout_constraintBottom_toTopOf="@+id/back_top_players"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
