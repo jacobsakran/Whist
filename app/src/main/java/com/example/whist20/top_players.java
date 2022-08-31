@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -61,12 +62,15 @@ public class top_players extends AppCompatActivity {
         }
 
         if (Objects.equals(user.uid, first.uid)) {
+            Toast.makeText(top_players.this, "congrats you got the first place!", Toast.LENGTH_LONG).show();
 
         }
         if (Objects.equals(user.uid, sec.uid)) {
+            Toast.makeText(top_players.this, "congrats you got the second place!", Toast.LENGTH_LONG).show();
 
         }
         if (Objects.equals(user.uid, third.uid)) {
+            Toast.makeText(top_players.this, "congrats you got the third place!", Toast.LENGTH_LONG).show();
 
         }
 
