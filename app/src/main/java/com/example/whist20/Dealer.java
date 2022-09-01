@@ -4,8 +4,8 @@ public class Dealer extends Player {
     public Dealer() {
     }
 
-    public Dealer(String Uid, String userName) {
-        super(Uid, userName);
+    public Dealer(String Uid, String userName, int initial_budget) {
+        super(Uid, userName, initial_budget, 0);
     }
 
     @Override
@@ -13,11 +13,8 @@ public class Dealer extends Player {
         Node iterator = game.players.head;
         while (iterator != null) {
             Player player = ((Player) iterator.obj);
-            if (player == null) return;
-            if (((Player) iterator.obj).cards.sum() > this.cards.sum()) {
-                this.cards.addCard(game.dict.randomCard());
-                return;
-            }
+            if (player == null || this.cards.sum() == -1) return;
+            if (((Player) iterator.obj).cards.sum() > this.cards.sum() && this.cards.sum() < 20) this.cards.addCard(game.dict.randomCard());
             iterator = iterator.next;
         }
     }

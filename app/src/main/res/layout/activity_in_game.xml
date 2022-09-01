@@ -12,9 +12,9 @@
     <ImageView
         android:id="@+id/card25"
         android:layout_width="74dp"
-        android:layout_height="50dp"
+        android:layout_height="49dp"
         android:layout_marginStart="71dp"
-        android:layout_marginBottom="414dp"
+        android:layout_marginBottom="420dp"
         android:rotation="90"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,8 +24,8 @@
         android:id="@+id/card16"
         android:layout_width="74dp"
         android:layout_height="50dp"
-        android:layout_marginTop="267dp"
-        android:layout_marginEnd="67dp"
+        android:layout_marginTop="260dp"
+        android:layout_marginEnd="68dp"
         android:rotation="-90"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -86,6 +86,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@tools:sample/avatars" />
 
+
     <ImageView
         android:id="@+id/card10"
         android:layout_width="74dp"
@@ -100,7 +101,7 @@
     <ImageView
         android:id="@+id/card9"
         android:layout_width="74dp"
-        android:layout_height="50dp"
+        android:layout_height="54dp"
         android:layout_marginTop="440dp"
         android:layout_marginEnd="67dp"
         android:rotation="-90"
@@ -112,8 +113,8 @@
         android:id="@+id/card26"
         android:layout_width="74dp"
         android:layout_height="50dp"
-        android:layout_marginStart="71dp"
-        android:layout_marginTop="290dp"
+        android:layout_marginStart="72dp"
+        android:layout_marginTop="288dp"
         android:rotation="90"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -293,6 +294,7 @@
         android:layout_marginTop="19dp"
         android:layout_marginBottom="44dp"
         android:text="username"
+        android:textColor="#FDFCFC"
         app:layout_constraintBottom_toTopOf="@+id/missButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
@@ -309,6 +311,7 @@
         android:layout_marginBottom="282dp"
         android:rotation="90"
         android:text="player1"
+        android:textColor="#FDFCFC"
         app:layout_constraintBottom_toTopOf="@+id/hitButton"
         app:layout_constraintEnd_toStartOf="@+id/card25"
         app:layout_constraintHorizontal_bias="0.0"
@@ -323,8 +326,10 @@
         android:layout_marginTop="348dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="290dp"
+        android:clickable="false"
         android:rotation="-90"
         android:text="player2"
+        android:textColor="#FDFCFC"
         app:layout_constraintBottom_toTopOf="@+id/missButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/card14"
@@ -434,6 +439,7 @@
         android:layout_marginTop="154dp"
         android:layout_marginEnd="177dp"
         android:text="TextView"
+        android:textColor="#FDFCFC"
         app:layout_constraintBottom_toTopOf="@+id/card19"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -452,5 +458,164 @@
         app:layout_constraintEnd_toStartOf="@+id/missButton"
         app:layout_constraintStart_toEndOf="@+id/hitButton"
         app:layout_constraintTop_toBottomOf="@+id/playerUsername1" />
+
+    <TextView
+        android:id="@+id/bettingValueInGame"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="73dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginBottom="81dp"
+        android:textColor="#FDFCFC"
+        app:layout_constraintBottom_toTopOf="@+id/card24"
+        app:layout_constraintEnd_toStartOf="@+id/budgetInGame"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/budgetInGame"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="70dp"
+        android:layout_marginTop="73dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginBottom="81dp"
+        android:textColor="#FDFCFC"
+        app:layout_constraintBottom_toTopOf="@+id/card17"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/bettingValueInGame"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/exitButtonInGame"
+        android:layout_width="202dp"
+        android:layout_height="92dp"
+        android:layout_marginStart="105dp"
+        android:layout_marginTop="319dp"
+        android:layout_marginEnd="104dp"
+        android:layout_marginBottom="320dp"
+        android:text="Exit Game"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/continueButtonInGame"
+        android:layout_width="203dp"
+        android:layout_height="95dp"
+        android:layout_marginStart="104dp"
+        android:layout_marginTop="407dp"
+        android:layout_marginEnd="104dp"
+        android:layout_marginBottom="229dp"
+        android:text="Continue next the round"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/playerCard"
+        android:layout_width="228dp"
+        android:layout_height="304dp"
+        android:layout_marginStart="110dp"
+        android:layout_marginTop="198dp"
+        android:layout_marginEnd="110dp"
+        android:layout_marginBottom="144dp"
+        android:background="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.513"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.176" />
+
+    <TextView
+        android:id="@+id/player_card_username"
+        android:layout_width="82dp"
+        android:layout_height="18dp"
+        android:layout_marginStart="104dp"
+        android:layout_marginTop="260dp"
+        android:text="TextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/player_card_budget"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="104dp"
+        android:layout_marginTop="300dp"
+        android:text="TextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/player_card_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="392dp"
+        android:text="add friend"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/player_card_exit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="476dp"
+        android:text="exit"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/doubleButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="38dp"
+        android:layout_marginTop="41dp"
+        android:layout_marginBottom="8dp"
+        android:background="@android:color/black"
+        android:textColor="@android:color/white"
+        android:text="Double?"
+        app:layout_constraintBottom_toTopOf="@+id/hitButton"
+        app:layout_constraintEnd_toStartOf="@+id/noDoubleButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/card1" />
+
+    <Button
+        android:id="@+id/noDoubleButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="120dp"
+        android:layout_marginTop="37dp"
+        android:layout_marginEnd="45dp"
+        android:layout_marginBottom="2dp"
+        android:text="No Double"
+        app:layout_constraintBottom_toTopOf="@+id/missButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/doubleButton"
+        app:layout_constraintTop_toBottomOf="@+id/card7" />
+
+    <TextView
+        android:id="@+id/inGameRating"
+        android:layout_width="150dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="127dp"
+        android:layout_marginTop="43dp"
+        android:layout_marginEnd="134dp"
+        android:text="TextView"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/bettingValueInGame"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

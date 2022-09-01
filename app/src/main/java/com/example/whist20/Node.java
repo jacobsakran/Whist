@@ -14,6 +14,17 @@ public class Node {
         this.next = null;
     }
 
+    public Object findByValue(Object obj) {
+        Node iterator = this;
+        while (iterator != null) {
+            if (iterator.obj == null) break;
+            if (iterator.obj.equals(obj)) return iterator.obj;
+            iterator = iterator.next;
+        }
+
+        return null;
+    }
+
     public Object findByIndex(int index) {
         Node iterator = this;
         int counter = 0;
@@ -32,5 +43,29 @@ public class Node {
         Node iterator = this;
         while (iterator.next != null) iterator = iterator.next;
         iterator.next = new Node(obj);
+    }
+
+    public Node removeByValue(Object obj) {
+        Node head = this;
+        if (this.obj.equals(obj)) {
+            head = head.next;
+            if (head == null) head = new Node();
+            return head;
+        }
+        boolean tmp = false;
+        Node iterator1 = head;
+        Node iterator2 = head.next;
+        while (iterator2 != null) {
+            if (iterator2.obj.equals(obj)){
+                tmp = true;
+                break;
+            }
+            iterator2 = iterator2.next;
+            iterator1 = iterator1.next;
+        }
+        if(tmp) {
+            iterator1.next = iterator2.next;
+        }
+        return head;
     }
 }
